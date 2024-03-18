@@ -8,10 +8,6 @@ const router = express.Router();
 
 router.get('/', expenseController.getPage);
 
-router.post('/login', expenseController.postLogin);
-
-// router.get('/blog/comment/:blogId', expenseController.getComment);
-
-// router.post('/blog/comment/:blogId', expenseController.postComment);
+router.post('/user/signup', expenseController.postUserSignup);
 
 module.exports = router;
