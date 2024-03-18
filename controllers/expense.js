@@ -8,8 +8,8 @@ exports.getPage = (req, res, next) => {
 };
 
 exports.postUserSignup = (req, res, next) => {
-  const name = req.body.name1;
-  const email = req.body.email1;
+  const name = req.body.name;
+  const email = req.body.email;
   const password = req.body.password;
   let userIsFound = false;
   const userData = {};
@@ -39,3 +39,35 @@ exports.postUserSignup = (req, res, next) => {
   })
   .catch(err => console.log(err));  
 };
+
+
+exports.postTest = (req, res, next) => {
+  const name = req.body.name;
+  const email = req.body.email;
+  const password = req.body.password;
+  let userData = {};
+  User.findAll({ where: { email: email}})
+  .then((users) => {
+    // res.status(203).json(users);
+    if(users.length > 0) {
+      userData.users = users[0];
+      userData.error= 'User Already exists';
+
+    } else if (!userIsFound) {
+      User.create({ name: name, email: email, password: password })
+      .then((result) => {
+        console.log('user created');
+        userData.users = result;
+      })
+      .catch(err => console.log(err));
+    } 
+  })
+  .then((user) => {
+    res.status(203).json(userData);
+  })
+  .then(() => {
+    return userData;
+  })
+  .catch(err => console.log(err)); 
+  
+}
