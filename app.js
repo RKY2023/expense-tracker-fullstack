@@ -14,11 +14,15 @@ app.set("view engine", "ejs");
 app.set("views", "views");
 
 const expenseRoutes = require("./routes/expense");
+const userRoutes = require("./routes/user");
+const apiRoutes = require("./routes/api");
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use('/user',userRoutes);
+app.use('/api',apiRoutes);
 app.use(expenseRoutes);
 
 // Blog.hasMany(Comment);

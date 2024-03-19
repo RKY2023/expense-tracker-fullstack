@@ -12,6 +12,6 @@ router.get('/', expenseController.getPage);
 
 // router.post('/user/signup', expenseController.postUserSignup);
 
-router.post('/user/test', expenseController.postTest);
+router.post('/user/test', expenseController.newSignup);
 
 module.exports = router;

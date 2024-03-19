@@ -10,8 +10,8 @@
 <body class="bg-dark">
     <div class="container mx-auto mt-5">
         <div class="bg-white col-6 border border-warning rounded">
-            <h1 class="text-center">Login</h1>
-            <form action="/user/signup" method="post">
+            <h1 class="text-center"><% if (mode == 'signup') { %>Sign Up<% } else { %>Login<% } %></h1>
+            <form action="<% if (mode == 'signup') { %>/api/signup<% } else { %>/api/login<% } %>" method="<% if (mode == 'signup') { %>post<% } else { %>get<% } %>">
                 <div class="form-group">
                     <label for="imputUsername">Username</label>
                     <input id="inputUsername" class="form-control" type="name" name="name" required>    
@@ -24,8 +24,20 @@
                     <label for="imputPassword">Password</label>
                     <input id="inputPassword" class="form-control" type="password" name="password" required>    
                 </div>
-                <button id="loginBtn" class="btn btn-success w-100 my-4" type="submit" name="loginSubmit">submit</button>
+                <input type="hidden" name="mode" value="<%= mode %>">    
+                <button id="loginBtn" class="btn btn-success w-100 mt-4 " type="submit" name="loginSubmit">
+                    <% if (mode == 'signup') { %>Signup<% } else { %>Login<% } %>
+                </button>
             </form>
+            <hr class="m-3">
+            <div>
+                <form action="<% if (mode == 'signup') { %>/user/login<% } else { %>/user/signup<% } %>" method="post">
+                <input type="hidden" name="mode" value="<%= mode %>">    
+                <button id="loginBtn" class="btn btn-primary w-100 mb-4" type="submit" name="loginSubmit">
+                    <% if (mode == 'signup') { %>Already have an Account? Login<% } else { %>Don't have an account? Signup<% } %>
+                </button>
+                </form>
+            </div>
             <% if (userData) { %> 
             <div>
                 <% if (userData.error) { %> 
@@ -37,5 +49,8 @@
         
         
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="main.js"></script>
 </body>
+
 </html>
