@@ -11,7 +11,7 @@
     <div class="container mx-auto mt-5">
         <div class="bg-white col-6 border border-warning rounded">
             <h1 class="text-center"><% if (mode == 'signup') { %>Sign Up<% } else { %>Login<% } %></h1>
-            <form action="<% if (mode == 'signup') { %>/api/signup<% } else { %>/api/login<% } %>" method="<% if (mode == 'signup') { %>post<% } else { %>get<% } %>">
+            <form onsubmit="getLogin()" method="post">
                 <div class="form-group">
                     <label for="imputUsername">Username</label>
                     <input id="inputUsername" class="form-control" type="name" name="name" required>    
@@ -50,7 +50,23 @@
         
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
-    <script src="main.js"></script>
+    <!-- <script src="main.js"></script> -->
+    <script>
+        const getLogin = (e) => {
+            console.log(e)
+            // e.preventDefault();
+
+            // axios
+            // .get('http://localhost:3000/api/login?name=a&email=a%40a.com&password=1&mode=login&loginSubmit=')
+            // .then(res => showOutput(res))
+            // .catch(err => console.error(err));
+            axios
+            .get('https://jsonplaceholder.typicode.com/todos?_limit=3')
+            .then(res => console.log(res))
+            .catch(err => console.error(err));
+        }
+        
+    </script>
 </body>
 
 </html>
