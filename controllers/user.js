@@ -5,6 +5,7 @@ const login = (req, res, next) => {
   res.render("login", {
     userData: userData,
     mode: 'login',
+    error: [],
   });
 };
 
@@ -13,6 +14,7 @@ const signup = (req, res, next) => {
     res.render("login", {
       userData: userData,
       mode: 'signup',
+      error: [],
     });
   };
 
@@ -42,10 +44,12 @@ const signupAPI = (req, res, next) => {
 };
 
 const loginAPI = (req, res, next) => {
-    const { name, email, password } = req.body;
-    console.log(name, email, password);
+  console.log(req);
+    const { email, password } = req.body;
+    console.log( email, password);
     User.findAll({ where: { email: email } })
       .then((users) => {
+        // console.group(users)
         const user = users[0];
         // console.log(user.password, password, user.password == password)
         if(users.length == 0){

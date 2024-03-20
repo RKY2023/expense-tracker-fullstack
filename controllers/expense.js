@@ -5,7 +5,7 @@ const getPage = (req, res, next) => {
   res.render("login", {
     userData: userData,
     mode: 'signup',
-    
+    error: [],
   });
 };
 
