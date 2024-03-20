@@ -8,10 +8,10 @@ const router = express.Router();
 
 router.get('/', expenseController.getPage);
 
-// router.post('/user/login', expenseController.postUserLogin);
+router.get('/expense', expenseController.getExpense);
 
-// router.post('/user/signup', expenseController.postUserSignup);
+router.post('/expense/addExpense', expenseController.addExpense);
 
-router.post('/user/test', expenseController.newSignup);
+router.get('/expense/deleteExpense/:expenseId', expenseController.deleteExpense);
 
 module.exports = router;

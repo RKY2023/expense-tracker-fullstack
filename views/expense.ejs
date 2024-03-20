@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<body class="bg-dark">
+    <div class="container w-100 mt-5">
+        <div class="p-5 container bg-white border border-warning rounded">
+            <info><% if (error) { %> <%= error.message%> <% } %></info>
+            <h1 class="text-center">Expenses</h1>
+            <!-- <form onsubmit="addExpense()"> -->
+            <form action="/expense/addExpense" method="post">
+                
+                <div class="form-group">
+                    <label for="imputAmount">Amount</label>
+                    <input id="inputAmount" class="form-control" type="number" name="amount" required>    
+                </div>
+
+                <div class="form-group">
+                    <label for="imputDescription">Description</label>
+                    <input id="inputDescription" class="form-control" type="text" name="description" required>    
+                </div>
+                <div class="form-group">
+                    <label for="imputCategory">Category</label>
+                    <select id="inputCategory" class="form-control" type="text" name="category" required>
+                        <option>Food</option>
+                        <option>Fuel</option>
+                        <option>Powder</option>
+                    </select>
+                </div>
+                <input type="hidden" name="mode" value="<%= mode %>">    
+                <button class="btn btn-success w-100 mt-4 ">
+                    Add Expense
+                </button>
+            </form>
+            
+            <% if (expenses.length > 0) { %> 
+            <table class="mt-5 table bordered striped">
+                <thead>
+                    <tr>
+                        <th>Amount</th>
+                        <th>Descrition</th>
+                        <th>Category</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for ( expense of expenses) { %> 
+                    <tr>
+                        <td><%= expense.amount %></td>
+                        <td><%= expense.description %></td>
+                        <td><%= expense.category %></td>
+                        <td><form action="/expense/deleteExpense/<%= expense.id %>" method="get">
+                            <button class="btn btn-danger">Delete</button>
+                        </form></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+                
+            </table>
+            <% } %>
+        </div>
+        
+        
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="/main.js"></script>
+</body>
+
+</html>
