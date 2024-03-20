@@ -10,7 +10,9 @@ const getPage = (req, res, next) => {
 };
 
 const getExpense = async (req, res, next) => {
-  const expenses = await Expense.findAll();
+  console.log(req.user);
+  const expenses = await req.user.getExpenses();
+  // const expenses = await Expense.findAll();
   res.render("expense", {
     expenses: expenses || [],
     mode: 'signup',

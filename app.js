@@ -15,6 +15,7 @@ app.set("views", "views");
 const expenseRoutes = require("./routes/expense");
 const userRoutes = require("./routes/user");
 const apiRoutes = require("./routes/api");
+const Expense = require("./models/expense");
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -24,7 +25,8 @@ app.use('/user',userRoutes);
 app.use('/api',apiRoutes);
 app.use(expenseRoutes);
 
-// Blog.hasMany(Comment);
+User.hasMany(Expense);
+Expense.belongsTo(User);
 
 sequelize
   // .sync({ force: true})

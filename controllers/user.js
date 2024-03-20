@@ -1,5 +1,9 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
+
+const secret_key = 'H3l10';
+
 const login = (req, res, next) => {
   const userData = {};
   res.render("login", {
@@ -22,13 +26,34 @@ const validateString = (string) => {
   if (string.length > 6) return true;
 };
 
+const generateAccessToken = (user) => {
+  return jwt.sign({user}, secret_key);
+}
+
+const authenticate = async (req, res, next) => {
+  try {
+      const token = req.header('Authorization');
+      console.log(token);
+      const userId = jwt.verify(token, secret_key);
+      const user = await User.findByPk(userId);
+      req.user = user;
+      next();
+  } catch(err) {
+    console.log(err);
+    return res.status(401).json({error: { message: 'auth failed'}});
+  }
+}
+
 const signupAPI = (req, res, next) => {
   const { name, email, password } = req.body;
   console.log(name, email, password);
   bcrypt.hash(password, 10, async (err, result) => {
     await User.create({ name, email, password: result })
-    .then(() => {
+    .then((user) => {
       res.status(203).json({ message: "User created successfully" });
+      // console.log(user);
+      // console.log(generateAccessToken(user));
+      localStorage.setItem('token',generateAccessToken(user));
     })
     .catch((err) => {
       if (err.errors) {
@@ -58,6 +83,8 @@ const loginAPI = (req, res, next) => {
             bcrypt.compare(password, user.password, (err, matched) => {
                 if( matched ===  true) {
                     res.status(203).json({ user: user});
+                    // console.log(user);
+                    localStorage.setItem('token',generateAccessToken(user));
                 } else {
                     res.status(401).json({ error: { message: 'Invalid Password'}});        
                 }
@@ -79,5 +106,6 @@ module.exports = {
   signup: signup,
   login: login,
   signupAPI: signupAPI,
-  loginAPI: loginAPI
+  loginAPI: loginAPI,
+  authenticate: authenticate
 };
