@@ -1,7 +1,6 @@
 const Expense = require("../models/expense");
 
 const getPage = (req, res, next) => {
-  const userData = {};
   res.render("login", {
     userData: userData,
     mode: 'signup',
@@ -10,32 +9,54 @@ const getPage = (req, res, next) => {
 };
 
 const getExpense = async (req, res, next) => {
-  console.log(req.user);
-  const expenses = await req.user.getExpenses();
+  // const expenses = await req.user.getExpenses();
   // const expenses = await Expense.findAll();
   res.render("expense", {
+    expenses: [],
+  });
+};
+
+const getExpenseData = async (req, res, next) => {
+  // console.log('exp',req.user);
+  const expenses = await req.user.getExpenses();
+  // const expenses = await Expense.findAll();
+  // console.log(expenses);
+  res.render("expenseData", {
     expenses: expenses || [],
-    mode: 'signup',
-    error: [],
   });
 };
 
 const addExpense = async (req, res, next) => {
-  console.log(req.body);
+  console.log('aa',req.usera, req.body);
   const { amount, description, category } = req.body;
-  const response = await Expense.create({ amount, description, category })
-  res.status(201).json(response);  
+  // Expense.create({ amount, description, category })
+  const expense = await req.user.createExpense({ amount, description, category })
+  const expenses = [];
+  expenses.push(expense);
+  if( expense.id ){
+    res.render("expenseDataRow",{
+      expenses: expenses
+    })
+  } else{
+    res.status(404).json(expense);
+  }
+    
 };
 
 const deleteExpense = async (req, res, next) => {
   const expenseId = req.params.expenseId;
-  const expense = await Expense.findByPk(expenseId);
-  res.status(201).json(expense.destroy());
+  const isDestroyed = await Expense.destroy({ where: { id: expenseId, userId: req.user.id }});
+  if( isDestroyed == 1) {
+    res.status(201).json({ success: { message: 'Expense deleted' }});
+  } else {
+    res.status(201).json({ error: { message: 'delete Failed' }});
+  }
 };
 
 module.exports = {
   getPage: getPage,
   getExpense: getExpense,
   addExpense: addExpense,
-  deleteExpense: deleteExpense
+  deleteExpense: deleteExpense,
+  getExpenseData: getExpenseData
 };

@@ -10,10 +10,12 @@ const router = express.Router();
 
 router.get('/', expenseController.getPage);
 
-router.get('/expense', userController.authenticate, expenseController.getExpense);
+router.get('/expense', expenseController.getExpense);
 
-router.post('/expense/addExpense', expenseController.addExpense);
+router.get('/expense/expenseData', userController.authenticate, expenseController.getExpenseData);
 
-router.get('/expense/deleteExpense/:expenseId', expenseController.deleteExpense);
+router.post('/expense/addExpense', userController.authenticate, expenseController.addExpense);
+
+router.get('/expense/deleteExpense/:expenseId', userController.authenticate, expenseController.deleteExpense);
 
 module.exports = router;

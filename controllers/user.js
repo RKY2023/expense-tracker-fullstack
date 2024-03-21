@@ -27,15 +27,16 @@ const validateString = (string) => {
 };
 
 const generateAccessToken = (user) => {
-  return jwt.sign({user}, secret_key);
+  // console.log('tokenize', user);
+  return jwt.sign(user, secret_key);
 }
 
 const authenticate = async (req, res, next) => {
   try {
       const token = req.header('Authorization');
-      console.log(token);
-      const userId = jwt.verify(token, secret_key);
-      const user = await User.findByPk(userId);
+      const userData = jwt.verify(token, secret_key);
+      const user = await User.findByPk(userData.userId);
+      // console.log(token, user);
       req.user = user;
       next();
   } catch(err) {
@@ -50,15 +51,13 @@ const signupAPI = (req, res, next) => {
   bcrypt.hash(password, 10, async (err, result) => {
     await User.create({ name, email, password: result })
     .then((user) => {
-      res.status(203).json({ message: "User created successfully" });
-      // console.log(user);
-      // console.log(generateAccessToken(user));
-      localStorage.setItem('token',generateAccessToken(user));
+      const token = generateAccessToken({userId: user.id, username: user.name});
+      res.status(203).json({ user: user, token: token });
     })
     .catch((err) => {
       if (err.errors) {
         if ((err.errors.message = "email must be unique")) {
-          res.status(404).json({ error: { message: "Email already exists." } });
+          res.status(201).json({ error: { message: "Email already exists." } });
         }
       } else {
         res.status(404).json(err);
@@ -69,24 +68,20 @@ const signupAPI = (req, res, next) => {
 };
 
 const loginAPI = (req, res, next) => {
-  console.log(req);
     const { email, password } = req.body;
     console.log( email, password);
     User.findAll({ where: { email: email } })
       .then((users) => {
-        // console.group(users)
         const user = users[0];
-        // console.log(user.password, password, user.password == password)
         if(users.length == 0){
-            res.status(404).json({ error: { message: 'User doesn\'t exist'}});
+            res.status(200).json({ error: { message: 'User doesn\'t exist'}});
         } else if(user.password != password) {
             bcrypt.compare(password, user.password, (err, matched) => {
                 if( matched ===  true) {
-                    res.status(203).json({ user: user});
-                    // console.log(user);
-                    localStorage.setItem('token',generateAccessToken(user));
+                  const token = generateAccessToken({userId: user.id, username: user.name});
+                  res.status(203).json({ user: user, token: token });                    
                 } else {
-                    res.status(401).json({ error: { message: 'Invalid Password'}});        
+                  res.status(401).json({ error: { message: 'Invalid Password'}});        
                 }
             })
         } else {

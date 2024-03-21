@@ -1,0 +1,15 @@
+<% if (expenses.length > 0) { %> 
+    <table class="mt-5 table bordered striped">
+        <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Descrition</th>
+                <th>Category</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="addNewExpense">
+            <%- include('expenseDataRow.ejs') %>
+        </tbody>
+    </table>
+<% } %>

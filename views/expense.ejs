@@ -10,10 +10,11 @@
 <body class="bg-dark">
     <div class="container w-100 mt-5">
         <div class="p-5 container bg-white border border-warning rounded">
-            <info><% if (error) { %> <%= error.message%> <% } %></info>
+            <button onclick="buyPremium()" class="btn btn-primary">Buy Premium</button>
+            <info id="expenseError"class="text-center text-danger"></info>
             <h1 class="text-center">Expenses</h1>
             <!-- <form onsubmit="addExpense()"> -->
-            <form action="/expense/addExpense" method="post">
+            <form onsubmit="addExpense()">
                 
                 <div class="form-group">
                     <label for="imputAmount">Amount</label>
@@ -32,40 +33,13 @@
                         <option>Powder</option>
                     </select>
                 </div>
-                <input type="hidden" name="mode" value="<%= mode %>">    
+                
                 <button class="btn btn-success w-100 mt-4 ">
                     Add Expense
                 </button>
             </form>
-            
-            <% if (expenses.length > 0) { %> 
-            <table class="mt-5 table bordered striped">
-                <thead>
-                    <tr>
-                        <th>Amount</th>
-                        <th>Descrition</th>
-                        <th>Category</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% for ( expense of expenses) { %> 
-                    <tr>
-                        <td><%= expense.amount %></td>
-                        <td><%= expense.description %></td>
-                        <td><%= expense.category %></td>
-                        <td><form action="/expense/deleteExpense/<%= expense.id %>" method="get">
-                            <button class="btn btn-danger">Delete</button>
-                        </form></td>
-                    </tr>
-                    <% } %>
-                </tbody>
-                
-            </table>
-            <% } %>
+            <div id="expenseData"></div>
         </div>
-        
-        
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
     <script src="/main.js"></script>
