@@ -2,7 +2,6 @@ const Expense = require("../models/expense");
 
 const getPage = (req, res, next) => {
   res.render("login", {
-    userData: userData,
     mode: 'signup',
     error: [],
   });
@@ -11,6 +10,7 @@ const getPage = (req, res, next) => {
 const getExpense = async (req, res, next) => {
   // const expenses = await req.user.getExpenses();
   // const expenses = await Expense.findAll();
+  console.log('tttt');
   res.render("expense", {
     expenses: [],
   });

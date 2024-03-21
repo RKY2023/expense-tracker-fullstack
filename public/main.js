@@ -30,10 +30,8 @@ async function getLogin() {
       return;
     }
     localStorage.setItem('token',response.data.token); 
-    // window.location.href = 'http://localhost:3000/expense';
+    window.location.href = 'http://localhost:3000/expense';
       
-    const response2 = await axios.post('http://localhost:3000/expense',{}, { headers: {'Authorization': response.data.token}}); 
-    console.log(response2);
   } catch(err) {
     console.log(err);
   }
@@ -95,6 +93,31 @@ async function deleteExpense() {
 }
 
 
-const buyPremium = () => {
-  
+const buyPremium = async () => {
+  try{
+    const token = localStorage.getItem('token');
+    const response = await axios.get('http://localhost:3000/purchase/premium', { headers: { 'Authorization': token }}); 
+    console.log(response);
+    var options = {
+      "key": response.data.key_id, 
+      "order_id": response.data.order.id,
+      "handler": async function (response) {
+        await axios.post('http://localhost:3000/purchase/updateTransaction',{
+          order_id: options.order_id,
+          payment_id: response.razorpay_payment_id,
+        }, { headers: { 'Authorization': token }})
+        alert('okaa');
+      },
+    };
+    const rzp1 = new Razorpay(options);
+    rzp1.open();
+    e.preventDefault();
+
+    rzp1.on('payment.failed', function(response){
+      console.log(response);
+      alert('payment faled');
+    });
+  } catch(err) {
+    console.log(err);
+  }
 }

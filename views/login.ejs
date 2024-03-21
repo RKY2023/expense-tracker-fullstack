@@ -33,24 +33,13 @@
                 </button>
             </form>
             <hr class="m-3">
-            <div>
-                <form action="<% if (mode == 'signup') { %>/user/login<% } else { %>/user/signup<% } %>" method="post">
-                <input type="hidden" name="mode" value="<%= mode %>">    
-                <button class="btn btn-primary w-100">
+            <div>   
+                <a href="<% if (mode == 'signup') { %>/user/login<% } else { %>/user/signup<% } %>" class="btn btn-primary w-100">
                     <% if (mode == 'signup') { %>Already have an Account? Login<% } else { %>Don't have an account? Signup<% } %>
-                </button>
+                </a>
                 </form>
             </div>
-            <% if (userData) { %> 
-            <div>
-                <% if (userData.error) { %> 
-                    <%= userData.error %>
-                <% } %>
-            </div>
-            <% } %>
         </div>
-        
-        
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
     <script src="/main.js"></script>

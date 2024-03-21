@@ -5,18 +5,14 @@ const jwt = require('jsonwebtoken');
 const secret_key = 'H3l10';
 
 const login = (req, res, next) => {
-  const userData = {};
   res.render("login", {
-    userData: userData,
     mode: 'login',
     error: [],
   });
 };
 
 const signup = (req, res, next) => {
-    const userData = {};
     res.render("login", {
-      userData: userData,
       mode: 'signup',
       error: [],
     });
@@ -32,6 +28,7 @@ const generateAccessToken = (user) => {
 }
 
 const authenticate = async (req, res, next) => {
+  // console.log('rt')
   try {
       const token = req.header('Authorization');
       const userData = jwt.verify(token, secret_key);
