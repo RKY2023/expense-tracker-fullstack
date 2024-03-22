@@ -30,7 +30,8 @@ const addExpense = async (req, res, next) => {
   console.log('aa',req.usera, req.body);
   const { amount, description, category } = req.body;
   // Expense.create({ amount, description, category })
-  const expense = await req.user.createExpense({ amount, description, category })
+  const expense = await req.user.createExpense({ amount, description, category });
+  const totalExpenseUpdate = await req.user.update({totalExpense: parseFloat(req.user.totalExpense) + parseFloat(expense.amount)});
   const expenses = [];
   expenses.push(expense);
   if( expense.id ){

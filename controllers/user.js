@@ -48,7 +48,7 @@ const signupAPI = (req, res, next) => {
   bcrypt.hash(password, 10, async (err, result) => {
     await User.create({ name, email, password: result })
     .then((user) => {
-      const token = generateAccessToken({userId: user.id, username: user.name, isPremium: ispremiumuser});
+      const token = generateAccessToken({userId: user.id, username: user.name, isPremium: user.ispremiumuser});
       res.status(203).json({ user: user, token: token });
     })
     .catch((err) => {
