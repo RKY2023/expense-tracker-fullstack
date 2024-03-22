@@ -48,7 +48,7 @@ const signupAPI = (req, res, next) => {
   bcrypt.hash(password, 10, async (err, result) => {
     await User.create({ name, email, password: result })
     .then((user) => {
-      const token = generateAccessToken({userId: user.id, username: user.name});
+      const token = generateAccessToken({userId: user.id, username: user.name, isPremium: ispremiumuser});
       res.status(203).json({ user: user, token: token });
     })
     .catch((err) => {
@@ -75,7 +75,8 @@ const loginAPI = (req, res, next) => {
         } else if(user.password != password) {
             bcrypt.compare(password, user.password, (err, matched) => {
                 if( matched ===  true) {
-                  const token = generateAccessToken({userId: user.id, username: user.name});
+                  user.password = '';
+                  const token = generateAccessToken({userId: user.id, username: user.name, isPremium: user.ispremiumuser});
                   res.status(203).json({ user: user, token: token });                    
                 } else {
                   res.status(401).json({ error: { message: 'Invalid Password'}});        

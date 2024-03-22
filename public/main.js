@@ -6,6 +6,10 @@ if(window.location.pathname === '/expense') {
     console.log(response);
     document.getElementById('expenseData').innerHTML = response.data;
   });
+  const isPremium = localStorage.getItem('isPremium');
+  if(isPremium === 'true') {
+    document.getElementById('isPremium').removeAttribute('hidden');
+  }
 }
 
 async function getLogin() {
@@ -28,6 +32,9 @@ async function getLogin() {
     if(response.data.error) {
       document.getElementById('loginError').innerHTML = response.data.error.message;
       return;
+    }
+    if(response.data.user && response.data.user.ispremiumuser) {
+      localStorage.setItem('isPremium',true); 
     }
     localStorage.setItem('token',response.data.token); 
     window.location.href = 'http://localhost:3000/expense';
@@ -106,7 +113,7 @@ const buyPremium = async () => {
           order_id: options.order_id,
           payment_id: response.razorpay_payment_id,
         }, { headers: { 'Authorization': token }})
-        alert('okaa');
+        alert('Payment successful');
       },
     };
     const rzp1 = new Razorpay(options);
@@ -115,7 +122,7 @@ const buyPremium = async () => {
 
     rzp1.on('payment.failed', function(response){
       console.log(response);
-      alert('payment faled');
+      alert('Payment failed');
     });
   } catch(err) {
     console.log(err);
