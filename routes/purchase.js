@@ -10,6 +10,6 @@ const userController = require('../controllers/user');
 
 router.get('/purchase/premium', userController.authenticate, purchaseController.purchasePremium);
 
-router.get('/purchase/updateTransaction', userController.authenticate, purchaseController.purchasePremium);
+router.post('/purchase/updateTransaction', userController.authenticate, purchaseController.updateTransaction);
 
 module.exports = router;

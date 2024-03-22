@@ -33,7 +33,7 @@ const authenticate = async (req, res, next) => {
       const token = req.header('Authorization');
       const userData = jwt.verify(token, secret_key);
       const user = await User.findByPk(userData.userId);
-      // console.log(token, user);
+      // console.log(token);
       req.user = user;
       next();
   } catch(err) {

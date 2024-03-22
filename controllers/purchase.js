@@ -3,8 +3,6 @@ const Order = require("../models/order");
 
 
 const purchasePremium = (req, res, next) => {
-    // console.log('tt');
-    // console.log(process.env.RAZORPAY_KEY_ID);
     try{
         const rzp = new Razorpay({
             key_id: process.env.RAZORPAY_KEY_ID,
@@ -16,7 +14,7 @@ const purchasePremium = (req, res, next) => {
             if(err) {
                 throw new Error(JSON.stringify(err));
             }
-            req.user.createOrder({ orderId: order.id, status: 'PENDING'}).then(() => {
+            req.user.createOrder({ orderid: order.id, status: 'PENDING'}).then(() => {
                 return res.status(201).json({ order, key_id: rzp.key_id});
             }).catch(err => {
                 throw new Error(err);
@@ -38,6 +36,7 @@ const updateTransaction = async (req, res, next) => {
         return res.status(202).json({ success: true, message: "Transaction success"});
 
     } catch (err) {
+        console.log(err);
         throw new Error(err);
     }
 }
