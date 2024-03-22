@@ -20,6 +20,7 @@ const userRoutes = require("./routes/user");
 const apiRoutes = require("./routes/api");
 const purchaseRoutes = require("./routes/purchase");
 const premiumRoutes = require("./routes/premium");
+const passwordRoutes = require("./routes/password");
 
 
 app.use(cors());
@@ -32,6 +33,7 @@ app.use('/api',apiRoutes);
 app.use(expenseRoutes);
 app.use(purchaseRoutes);
 app.use('/premium',premiumRoutes);
+app.use('/password',passwordRoutes);
 
 User.hasMany(Expense);
 Expense.belongsTo(User);

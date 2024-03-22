@@ -16,27 +16,39 @@ if(window.location.pathname === '/expense') {
 async function getLogin() {
   event.preventDefault();
   try{
-   
-    const userDetail = {
-      name: event.target.name.value,
-      email: event.target.email.value,
-      password: event.target.password.value
-    }
-    console.log(userDetail);
+    let userDetail;
     const loginMode = document.getElementById('loginMode').value;
     let url = 'http://localhost:3000/api/login';
     if(loginMode == 'signup') {
       url = 'http://localhost:3000/api/signup';
+      userDetail = {
+        name: event.target.name.value,
+        email: event.target.email.value,
+        password: event.target.password.value
+      }
+    } else if(loginMode == 'forgotpassword') {
+      url = 'http://localhost:3000/password/sendmail';
+      userDetail = {
+        email: event.target.email.value,
+      }
+    } else {
+      userDetail = {
+        email: event.target.email.value,
+        password: event.target.password.value
+      }
     }
+    console.log(userDetail);
     const response = await axios.post(url, userDetail); 
     // const data = await response.json();
     if(response.data.error) {
       document.getElementById('loginError').innerHTML = response.data.error.message;
       return;
     }
-    localStorage.setItem('token',response.data.token); 
-    window.location.href = 'http://localhost:3000/expense';
-      
+    if (loginMode == 'login' || loginMode == 'signup') {
+      localStorage.setItem('token',response.data.token); 
+      window.location.href = 'http://localhost:3000/expense';
+    }
+ 
   } catch(err) {
     console.log(err);
   }
