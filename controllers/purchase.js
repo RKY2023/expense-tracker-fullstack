@@ -33,7 +33,11 @@ const updateTransaction = async (req, res, next) => {
         const order = await Order.findOne({ where: { orderid: order_id }});
         const p1 = await order.update({ paymentid: payment_id, status: 'SUCCESSFUL'});
         const p2 = await req.user.update({ ispremiumuser: true});
-        return res.status(202).json({ success: true, message: "Transaction success"});
+        Promise.all([p1, p2]).then( () => {
+            return res.status(202).json({ success: true, message: "Transaction success"});
+        }).catch((err) => {
+            throw new Error(err);
+        });
 
     } catch (err) {
         console.log(err);
