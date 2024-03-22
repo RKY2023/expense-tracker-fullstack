@@ -100,5 +100,6 @@ module.exports = {
   login: login,
   signupAPI: signupAPI,
   loginAPI: loginAPI,
-  authenticate: authenticate
+  authenticate: authenticate,
+  generateAccessToken,
 };
