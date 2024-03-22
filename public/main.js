@@ -128,3 +128,17 @@ const buyPremium = async () => {
     console.log(err);
   }
 }
+
+async function showLeaderboard() {
+  try{
+    const response = await axios.get('http://localhost:3000/premium/leaderboard'); 
+    if(response.data) {
+      document.getElementById('leadersboardData').innerHTML = response.data;
+    }
+    console.log(response);
+  } catch(err) {
+    console.log(err);
+  }
+  return false;
+}
+

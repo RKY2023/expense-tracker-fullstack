@@ -10,7 +10,10 @@
 <body class="bg-dark">
     <div class="container w-100 mt-5">
         <div class="p-5 container bg-white border border-warning rounded">
-            <div id="isPremium" hidden class="m-3 text-center text-white bg-warning">You are Premium User</div>
+            <div id="isPremium" hidden class="m-3 text-center text-white bg-warning">
+                You are Premium User
+                <button onclick="showLeaderboard()" class="m-1 btn btn-secondary btn-sm">show Leadersboard</button>                
+            </div>
             <button onclick="buyPremium()" class="btn btn-primary">Buy Premium</button>
             <info id="expenseError"class="text-center text-danger"></info>
             <h1 class="text-center">Expenses</h1>
@@ -40,6 +43,7 @@
                 </button>
             </form>
             <div id="expenseData"></div>
+            <div id="leadersboardData"></div>
         </div>
     </div>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

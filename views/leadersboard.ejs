@@ -1,0 +1,19 @@
+<% if (leaderboard.length > 0) { %> 
+    <h1>Expense Leadersboard</h1>
+    <table class="mt-5 table bordered striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Total Expense</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for ( user of leaderboard) { %> 
+                <tr id="lb-<%= user.userId %>">
+                    <td><%= user.userName %></td>
+                    <td><%= user.totalExpense %></td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+<% } %>
