@@ -1,4 +1,5 @@
 const Expense = require("../models/expense");
+const sequelize = require("../util/database");
 
 const getPage = (req, res, next) => {
   res.render("login", {
@@ -30,8 +31,16 @@ const addExpense = async (req, res, next) => {
   console.log('aa',req.usera, req.body);
   const { amount, description, category } = req.body;
   // Expense.create({ amount, description, category })
-  const expense = await req.user.createExpense({ amount, description, category });
-  const totalExpenseUpdate = await req.user.update({totalExpense: parseFloat(req.user.totalExpense) + parseFloat(expense.amount)});
+  let expense;
+  let transaction;
+  try {
+    transaction = await sequelize.transaction();
+    expense = await req.user.createExpense({ amount, description, category }, { transaction });
+    await req.user.update({totalExpense: parseFloat(req.user.totalExpense) + parseFloat(expense.amount)}, { transaction });
+    await transaction.commit();
+  } catch(err) {
+    if (transaction) await transaction.rollback();
+  }
   const expenses = [];
   expenses.push(expense);
   if( expense.id ){
@@ -46,7 +55,15 @@ const addExpense = async (req, res, next) => {
 
 const deleteExpense = async (req, res, next) => {
   const expenseId = req.params.expenseId;
-  const isDestroyed = await Expense.destroy({ where: { id: expenseId, userId: req.user.id }});
+  let transaction;
+  let isDestroyed;
+  try {
+    transaction = await sequelize.transaction();
+    isDestroyed = await Expense.destroy({ where: { id: expenseId, userId: req.user.id }}, { transaction });
+    await transaction.commit();
+  } catch (err) {
+    await transaction.rollback();
+  }
   if( isDestroyed == 1) {
     res.status(201).json({ success: { message: 'Expense deleted' }});
   } else {
