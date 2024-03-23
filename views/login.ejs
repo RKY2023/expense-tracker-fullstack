@@ -27,11 +27,13 @@
                     <input id="inputUsername" class="form-control" type="name" name="name" required>    
                 </div>
                 <% } %>
+                <% if (mode == 'signup' || mode == 'login' || mode == 'forgotpassword' ) { %> 
                 <div class="form-group">
                     <label for="imputEmail">Email Address</label>
                     <input id="inputEmail" class="form-control" type="email" name="email" required>    
                 </div>
-                <% if (mode == 'signup' || mode == 'login') { %> 
+                <% } %>
+                <% if (mode == 'signup' || mode == 'login' || mode == 'resetpassword' ) { %> 
                 <div class="form-group">
                     <label for="imputPassword">Password</label>
                     <input id="inputPassword" class="form-control" type="password" name="password" required>    
@@ -45,18 +47,22 @@
                         { %>Login<% }
                         else if (mode == 'forgotpassword') 
                         { %>Send Mail<% }
+                        else if (mode == 'resetpassword') 
+                        { %>Enter New Password<% }
                     %>
                 </button>
             </form>
-            <% if (mode != 'forgotpassword') { %>
+            <% if (mode == 'signup' || mode == 'login') { %>
             <hr class="m-3">
             <div>   
                 <a href="<% if (mode == 'signup') { %>/user/login<% } else { %>/user/signup<% } %>" class="btn btn-primary w-100">
                     <% if (mode == 'signup') { %>Already have an Account? Login<% } else { %>Don't have an account? Signup<% } %>
                 </a>
-                </form>
             </div>
             <% } %>
+            <% if (mode == 'resetpassword') { %>
+                <input id="resetpasswordToken" type="hidden" value="<%= token %>"/>
+            <% } %>    
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>

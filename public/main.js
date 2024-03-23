@@ -38,7 +38,13 @@ async function getLogin() {
       }
     }
     console.log(userDetail);
-    const response = await axios.post(url, userDetail); 
+    let response;
+    if(loginMode == 'forgotpassword') {
+      const token = localStorage.getItem('token');
+      response = await axios.post(url, userDetail, { headers: { 'Authorization': token }}); 
+    } else {
+      response = await axios.post(url, userDetail); 
+    }
     // const data = await response.json();
     if(response.data.error) {
       document.getElementById('loginError').innerHTML = response.data.error.message;
