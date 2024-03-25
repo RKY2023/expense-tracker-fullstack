@@ -1,5 +1,8 @@
 const Expense = require("../models/expense");
 const sequelize = require("../util/database");
+const S3Services = require("../services/S3Services");
+const UserServices = require("../services/userservices");
+
 
 const getPage = (req, res, next) => {
   res.render("login", {
@@ -78,6 +81,23 @@ const reportExpense = (req, res, next) => {
   });
 }
 
+const download = async (req, res, next) =>  {
+  try {
+    const expenses = await UserServices.getExpenses();
+    const stringifiedExpenses = JSON.stringify(expenses);
+    const userId = req.user.id;
+    const timestamp = Math.floor(new Date('2012.08.10').getTime() / 1000);
+    const filename = `Expense_${userId}/${timestamp}_Expenses.txt`;
+    const fileUrl = await S3Services.uploadToS3(stringifiedExpenses, filename);
+    res.status(200).json({ fileUrl, success: true })
+  } catch(err) {
+      console.log(err);
+      res.json(500).json({ fileUrl: '', sucess: false, error: err})
+  }
+  
+}
+
+
 module.exports = {
   getPage: getPage,
   getExpense: getExpense,
@@ -85,4 +105,5 @@ module.exports = {
   deleteExpense: deleteExpense,
   getExpenseData: getExpenseData,
   reportExpense,
+  download,
 };

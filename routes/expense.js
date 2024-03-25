@@ -20,4 +20,6 @@ router.get('/expense/deleteExpense/:expenseId', userController.authenticate, exp
 
 router.get('/expense/report', expenseController.reportExpense);
 
+router.get('/expense/download', userController.authenticate, expenseController.download);
+
 module.exports = router;

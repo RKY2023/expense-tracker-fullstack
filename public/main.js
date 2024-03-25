@@ -12,9 +12,6 @@ if(window.location.pathname === '/expense') {
     document.getElementById('isPremium').removeAttribute('hidden');
   }
 }
-if(window.location.pathname === '/password/resetpassword/') {
-  
-}
 
 async function getLogin() {
   event.preventDefault();
@@ -181,4 +178,10 @@ function parseJwt (token) {
   }).join(''));
 
   return JSON.parse(jsonPayload);
+}
+
+async function download () {
+  const token = localStorage.getItem('token');
+  const response = await axios.get('http://localhost:3000/expense/download', { headers: { 'Authorization': token }})
+  console.log(response);
 }
