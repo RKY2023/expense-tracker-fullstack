@@ -94,7 +94,6 @@ const download = async (req, res, next) =>  {
       console.log(err);
       res.json(500).json({ fileUrl: '', sucess: false, error: err})
   }
-  
 }
 
 
