@@ -12,6 +12,9 @@ if(window.location.pathname === '/expense') {
     document.getElementById('isPremium').removeAttribute('hidden');
   }
 }
+if(window.location.pathname === '/password/resetpassword/') {
+  
+}
 
 async function getLogin() {
   event.preventDefault();
@@ -31,6 +34,12 @@ async function getLogin() {
       userDetail = {
         email: event.target.email.value,
       }
+    } else if(loginMode == 'resetpassword') {
+      url = 'http://localhost:3000/password/updatepassword';
+      userDetail = {
+        resetId: window.location.pathname.replaceAll('/password/resetpassword/',''),
+        password: event.target.password.value
+      }
     } else {
       userDetail = {
         email: event.target.email.value,
@@ -46,6 +55,10 @@ async function getLogin() {
       response = await axios.post(url, userDetail); 
     }
     // const data = await response.json();
+    if(response.data.success && loginMode == 'resetpassword') {
+      document.getElementById('loginError').innerHTML = response.data.success.message;
+      return;
+    }
     if(response.data.error) {
       document.getElementById('loginError').innerHTML = response.data.error.message;
       return;

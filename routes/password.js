@@ -11,6 +11,8 @@ router.get('/forgotpassword', passwordController.forgotPassword);
 
 router.post('/sendmail', userController.authenticate, passwordController.forgotPasswordMail);
 
-router.post('/resetpassword/:resetId', passwordController.resetPassword);
+router.get('/resetpassword/:resetId', passwordController.resetPassword);
+
+router.post('/updatepassword', passwordController.updatePassword);
 
 module.exports = router;

@@ -1,9 +1,9 @@
 const Sib = require('sib-api-v3-sdk');
 const { v4: uuidv4 } = require('uuid');
+const bcrypt = require("bcrypt");
 
 const ForgotPasswordRequests = require("../models/forgotPassword");
 const User = require("../models/user");
-const userController = require('./user');
 
 const forgotPassword = (req, res, next) => {
     res.render("login", {
@@ -15,8 +15,9 @@ const forgotPassword = (req, res, next) => {
 const forgotPasswordMail = async (req, res, next) => {
     console.log('forgotPasswordMail', req.body, req.params);
     const uuid = uuidv4();
+    console.log(User);
     console.log(req.user);
-    const fpm = await req.user.createForgotpasswordrequests({id: uuid, isactive: true});
+    const fpm = await req.user.createForgotpasswordrequest({id: uuid, isactive: true});
     console.log(fpm)
 
     const defaultClient = Sib.ApiClient.instance;
@@ -49,30 +50,35 @@ const forgotPasswordMail = async (req, res, next) => {
 }
 
 const resetPassword = async (req, res, next) => {
-    console.log('resetpassword', req.body, req.params);
-    // resetId
-    const resetId = req.params.resetId;
-    const fpr = ForgotPasswordRequests.findAll({ where: { id: resetId, isactive: true }});
-    const user = User.findByPk(fpr.userId);
-    console.log(fpr, user);
     res.render("login", {
         mode: 'resetpassword',
-        token: user,
         error: [],
     });
 }
 
 const updatePassword = async (req, res, next) => {
-    console.log('resetpassword', req.body, req.params);
-    // resetId
-    const resetId = req.params.resetId;
-    const user = req.user.update({ password: newpassword });
-    console.log(fpr);
-    res.status(200).json({ success : { message: 'Your password has been updated.' }});
+    const newpassword = req.body.password;
+    const resetId = req.body.resetId;
+    try {
+        const fpr = await ForgotPasswordRequests.findAll({ where: { id: resetId, isactive: true }});
+        const fpr2 = await fpr[0].update({ isactive: false });
+        const user = await User.findAll({ where: { id: fpr[0].userId } });
+        let passwordupdated;
+        bcrypt.hash(newpassword, 10, async (err, result) => {
+            passwordupdated = await user[0].update({ password: result });
+        })
+        res.status(200).json({ success : { message: 'Your password has been updated.' }});
+    } catch (err) {
+        console.log(err);
+        res.status(200).json({ error : { message: 'Something went wrong' }});
+    }
+    
+    
 }
 
 module.exports = {
     forgotPassword,
     forgotPasswordMail,
     resetPassword, 
+    updatePassword
 }
