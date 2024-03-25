@@ -18,4 +18,6 @@ router.post('/expense/addExpense', userController.authenticate, expenseControlle
 
 router.get('/expense/deleteExpense/:expenseId', userController.authenticate, expenseController.deleteExpense);
 
+router.get('/expense/report', expenseController.reportExpense);
+
 module.exports = router;

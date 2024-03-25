@@ -71,10 +71,18 @@ const deleteExpense = async (req, res, next) => {
   }
 };
 
+const reportExpense = (req, res, next) => {
+  const expenses = [];
+  res.render("reportExpense/reportExpense", {
+    expenses: expenses || [],
+  });
+}
+
 module.exports = {
   getPage: getPage,
   getExpense: getExpense,
   addExpense: addExpense,
   deleteExpense: deleteExpense,
-  getExpenseData: getExpenseData
+  getExpenseData: getExpenseData,
+  reportExpense,
 };
