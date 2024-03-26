@@ -1,9 +1,14 @@
 const path = require("path");
 require('dotenv').config();
+const fs = require('fs');
 
 var cors = require('cors');
 const express = require("express");
 const bodyParser = require("body-parser");
+const helmet = require('helmet');
+const helmet = require('compression');
+const morgan = require('morgan');
+// const helmet = require('compression');
 
 const sequelize = require("./util/database");
 const User = require("./models/user");
@@ -23,7 +28,14 @@ const purchaseRoutes = require("./routes/purchase");
 const premiumRoutes = require("./routes/premium");
 const passwordRoutes = require("./routes/password");
 
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, 'access.log'),
+  { flags: a }
+);
 
+app.use(helmet);
+app.use(compression);
+app.use(morgan('combined', { stream: accessLogStream}));
 app.use(cors());
 // app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -50,6 +62,6 @@ sequelize
   // .sync({ force: true})
   .sync()
   .then((user) => {
-    app.listen(3000);
+    app.listen( process.env.PORT || 3000);
   })
   .catch((err) => console.log(err));

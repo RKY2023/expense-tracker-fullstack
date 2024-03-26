@@ -2,8 +2,6 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 
-const secret_key = 'H3l10';
-
 const login = (req, res, next) => {
   res.render("login", {
     mode: 'login',
@@ -24,14 +22,14 @@ const validateString = (string) => {
 
 const generateAccessToken = (user) => {
   // console.log('tokenize', user);
-  return jwt.sign(user, secret_key);
+  return jwt.sign(user, process.env.PASSWORD_SECRET_KEY);
 }
 
 const authenticate = async (req, res, next) => {
   // console.log('rt')
   try {
       const token = req.header('Authorization');
-      const userData = jwt.verify(token, secret_key);
+      const userData = jwt.verify(token, process.env.PASSWORD_SECRET_KEY);
       const user = await User.findByPk(userData.userId);
       // console.log(token);
       req.user = user;
