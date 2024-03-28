@@ -72,6 +72,7 @@ const loginAPI = (req, res, next) => {
             res.status(200).json({ error: { message: 'User doesn\'t exist'}});
         } else if(user.password != password) {
             bcrypt.compare(password, user.password, (err, matched) => {
+              console.log(password, user.password, matched);
                 if( matched ===  true) {
                   user.password = '';
                   const token = generateAccessToken({userId: user.id, username: user.name, isPremium: user.ispremiumuser});
