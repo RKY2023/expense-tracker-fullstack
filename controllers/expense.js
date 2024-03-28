@@ -21,10 +21,10 @@ const getExpense = async (req, res, next) => {
 };
 
 const getExpenseData = async (req, res, next) => {
-  // console.log('exp',req.user);
+  console.log('exp',req.user);
   const expenses = await req.user.getExpenses();
   // const expenses = await Expense.findAll();
-  // console.log(expenses);
+  console.log(expenses);
   res.render("expenseData", {
     expenses: expenses || [],
   });

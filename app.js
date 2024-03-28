@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 // const compression = require("compression");
 // const morgan = require("morgan");
 // const helmet = require('compression');
+app.use(cors());
 
 const sequelize = require("./util/database");
 const User = require("./models/user");
@@ -40,7 +41,7 @@ const passwordRoutes = require("./routes/password");
 // app.use(helmet());
 // app.use(compression());
 // app.use(morgan("combined", { stream: accessLogStream }));
-app.use(cors());
+
 // app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
