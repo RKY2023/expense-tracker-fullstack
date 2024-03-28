@@ -32,10 +32,10 @@ const purchaseRoutes = require("./routes/purchase");
 const premiumRoutes = require("./routes/premium");
 const passwordRoutes = require("./routes/password");
 
-const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "access.log"),
-  { flags: "a" }
-);
+// const accessLogStream = fs.createWriteStream(
+//   path.join(__dirname, "access.log"),
+//   { flags: "a" }
+// );
 
 // app.use(helmet());
 // app.use(compression());
