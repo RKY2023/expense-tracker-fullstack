@@ -6,9 +6,9 @@ const https = require("https");
 var cors = require("cors");
 const express = require("express");
 const bodyParser = require("body-parser");
-const helmet = require("helmet");
-const compression = require("compression");
-const morgan = require("morgan");
+// const helmet = require("helmet");
+// const compression = require("compression");
+// const morgan = require("morgan");
 // const helmet = require('compression');
 
 const sequelize = require("./util/database");
@@ -37,13 +37,13 @@ const accessLogStream = fs.createWriteStream(
   { flags: "a" }
 );
 
-app.use(helmet());
-app.use(compression());
-app.use(morgan("combined", { stream: accessLogStream }));
+// app.use(helmet());
+// app.use(compression());
+// app.use(morgan("combined", { stream: accessLogStream }));
 app.use(cors());
 // app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-// app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/user", userRoutes);
 app.use("/api", apiRoutes);
@@ -52,10 +52,10 @@ app.use(purchaseRoutes);
 app.use("/premium", premiumRoutes);
 app.use("/password", passwordRoutes);
 
-app.use((req, res) => {
-  console.log('urll:', req.url);
-  res.sendFile(path.join(__dirname,`public/${req.url}`));
-})
+// app.use((req, res) => {
+//   console.log('urll:', req.url);
+//   // res.sendFile(path.join(__dirname,`public/${req.url}`));
+// })
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
