@@ -66,6 +66,7 @@ Order.belongsTo(User);
 User.hasMany(forgotPasswordRequests);
 forgotPasswordRequests.belongsTo(User);
 
+console.log('tt',process.env.PORT)
 sequelize
   // .sync({ force: true})
   .sync()
@@ -73,6 +74,7 @@ sequelize
     // https
     //   .createServer({ key: privateKey, cert: certificate }, app)
     //   .listen(process.env.PORT || 3000);
+    console.log('tst',process.env.PORT)
     app.listen( process.env.PORT || 3000);
   })
   .catch((err) => console.log(err));
