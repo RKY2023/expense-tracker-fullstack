@@ -3,7 +3,7 @@ require("dotenv").config();
 const fs = require("fs");
 const https = require("https");
 
-var cors = require("cors");
+// var cors = require("cors");
 const express = require("express");
 const bodyParser = require("body-parser");
 // const helmet = require("helmet");
@@ -40,7 +40,7 @@ const accessLogStream = fs.createWriteStream(
 // app.use(helmet());
 // app.use(compression());
 // app.use(morgan("combined", { stream: accessLogStream }));
-app.use(cors());
+// app.use(cors());
 // app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
