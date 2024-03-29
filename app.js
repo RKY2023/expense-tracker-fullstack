@@ -52,7 +52,7 @@ app.use(expenseRoutes);
 app.use(purchaseRoutes);
 app.use("/premium", premiumRoutes);
 app.use("/password", passwordRoutes);
-
+console.log('t');
 // app.use((req, res) => {
 //   console.log('urll:', req.url);
 //   // res.sendFile(path.join(__dirname,`public/${req.url}`));
