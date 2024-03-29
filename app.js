@@ -1,7 +1,7 @@
 const path = require("path");
 require("dotenv").config();
 const fs = require("fs");
-const https = require("https");
+// const https = require("https");
 
 var cors = require("cors");
 const express = require("express");
@@ -23,8 +23,8 @@ const app = express();
 app.set("view engine", "ejs");
 app.set("views", "views");
 
-const privateKey = fs.readFileSync("server.key");
-const certificate = fs.readFileSync("server.cert");
+// const privateKey = fs.readFileSync("server.key");
+// const certificate = fs.readFileSync("server.cert");
 
 const expenseRoutes = require("./routes/expense");
 const userRoutes = require("./routes/user");
@@ -71,9 +71,9 @@ sequelize
   // .sync({ force: true})
   .sync()
   .then((user) => {
-    https
-      .createServer({ key: privateKey, cert: certificate }, app)
-      .listen(process.env.PORT || 3000);
-    // app.listen( process.env.PORT || 3000);
+    // https
+    //   .createServer({ key: privateKey, cert: certificate }, app)
+    //   .listen(process.env.PORT || 3000);
+    app.listen( process.env.PORT || 3000);
   })
   .catch((err) => console.log(err));
