@@ -83,7 +83,7 @@ const reportExpense = (req, res, next) => {
 
 const download = async (req, res, next) =>  {
   try {
-    const expenses = await UserServices.getExpenses();
+    const expenses = await UserServices.getExpenses(req);
     const stringifiedExpenses = JSON.stringify(expenses);
     const userId = req.user.id;
     const timestamp = Math.floor(new Date('2012.08.10').getTime() / 1000);
@@ -92,7 +92,7 @@ const download = async (req, res, next) =>  {
     res.status(200).json({ fileUrl, success: true })
   } catch(err) {
       console.log(err);
-      res.json(500).json({ fileUrl: '', sucess: false, error: err})
+      res.status(500).json({ fileUrl: '', sucess: false, error: err})
   }
 }
 

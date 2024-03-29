@@ -183,5 +183,12 @@ function parseJwt (token) {
 async function download () {
   const token = localStorage.getItem('token');
   const response = await axios.get('http://localhost:3000/expense/download', { headers: { 'Authorization': token }})
-  console.log(response);
+  if(response.status === 200) {
+    var a = document.createElement('a');
+    a.href = response.data.fileUrl;
+    a.download = 'expense.csv';
+    a.click();
+  } else {
+    throw new Error(response.data.message);
+  }
 }
