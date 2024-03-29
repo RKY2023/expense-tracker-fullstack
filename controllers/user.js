@@ -22,14 +22,14 @@ const validateString = (string) => {
 
 const generateAccessToken = (user) => {
   // console.log('tokenize', user);
-  return jwt.sign(user, process.env.PASSWORD_SECRET_KEY);
+  return jwt.sign(user, process.env.TOKEN_KEY);
 }
 
 const authenticate = async (req, res, next) => {
   // console.log('rt')
   try {
       const token = req.header('Authorization');
-      const userData = jwt.verify(token, process.env.PASSWORD_SECRET_KEY);
+      const userData = jwt.verify(token, process.env.TOKEN_KEY);
       const user = await User.findByPk(userData.userId);
       // console.log(token);
       req.user = user;
