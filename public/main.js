@@ -10,6 +10,7 @@ if(window.location.pathname === '/expense') {
   const decodedToken = parseJwt(token2);
   if(decodedToken.isPremium === true) {
     document.getElementById('isPremium').removeAttribute('hidden');
+    document.getElementById('isPremiumDownload').removeAttribute('hidden');
   }
 }
 
@@ -141,6 +142,7 @@ const buyPremium = async () => {
         }, { headers: { 'Authorization': token }})
         alert('Payment successful');
         document.getElementById('isPremium').removeAttribute('hidden');
+        document.getElementById('isPremiumDownload').removeAttribute('hidden');
         localStorage.setItem('token', resp.data.token);
       },
     };
