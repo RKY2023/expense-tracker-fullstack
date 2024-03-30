@@ -7,8 +7,6 @@
                 <th>Total Expense</th>
             </tr>
         </thead>
-        <%=  JSON.stringify(leaderboard) %>
-
         <tbody>
             <% for ( user of leaderboard) { %> 
                 <tr id="lb-<%= user.id %>">

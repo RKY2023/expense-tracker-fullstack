@@ -11,6 +11,7 @@ if(window.location.pathname === '/expense') {
   if(decodedToken.isPremium === true) {
     document.getElementById('isPremium').removeAttribute('hidden');
     document.getElementById('isPremiumDownload').removeAttribute('hidden');
+    document.getElementById('buyPremium').setAttribute('hidden');
   }
 }
 
@@ -143,6 +144,7 @@ const buyPremium = async () => {
         alert('Payment successful');
         document.getElementById('isPremium').removeAttribute('hidden');
         document.getElementById('isPremiumDownload').removeAttribute('hidden');
+        document.getElementById('buyPremium').setAttribute('hidden');
         localStorage.setItem('token', resp.data.token);
       },
     };
