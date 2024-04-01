@@ -12,7 +12,7 @@ router.get('/', expenseController.getPage);
 
 router.get('/expense', expenseController.getExpense);
 
-router.get('/expense/expenseData', userController.authenticate, expenseController.getExpenseData);
+router.post('/expense/expenseData', userController.authenticate, expenseController.getExpenseData);
 
 router.post('/expense/addExpense', userController.authenticate, expenseController.addExpense);
 

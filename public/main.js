@@ -2,7 +2,7 @@ if(window.location.pathname === '/expense') {
   window.addEventListener('DOMContentLoaded', async() => {
     console.log('Onit');
     const token = localStorage.getItem('token');
-    const response = await axios.get('http://16.170.117.21:3000/expense/expenseData', { headers: { 'Authorization': token }});
+    const response = await axios.post('http://'+window.location.host+'/expense/expenseData',{}, { headers: { 'Authorization': token }});
     console.log(response);
     document.getElementById('expenseData').innerHTML = response.data;
   });
@@ -15,26 +15,35 @@ if(window.location.pathname === '/expense') {
   }
 }
 
+const getExpensepage = async () => {
+  const token = localStorage.getItem('token');
+  const page = document.getElementById('page').value;
+  const pages = document.getElementById('page').dataset.pages;
+  const response = await axios.post('http://'+window.location.host+'/expense/expenseData', { page, pages } , { headers: { 'Authorization': token }});
+  console.log(response);
+  document.getElementById('expenseData').innerHTML = response.data;
+}
+
 async function getLogin() {
   event.preventDefault();
   try{
     let userDetail;
     const loginMode = document.getElementById('loginMode').value;
-    let url = 'http://16.170.117.21:3000/api/login';
+    let url = 'http://'+window.location.host+'/api/login';
     if(loginMode == 'signup') {
-      url = 'http://16.170.117.21:3000/api/signup';
+      url = 'http://'+window.location.host+'/api/signup';
       userDetail = {
         name: event.target.name.value,
         email: event.target.email.value,
         password: event.target.password.value
       }
     } else if(loginMode == 'forgotpassword') {
-      url = 'http://16.170.117.21:3000/password/sendmail';
+      url = 'http://'+window.location.host+'/password/sendmail';
       userDetail = {
         email: event.target.email.value,
       }
     } else if(loginMode == 'resetpassword') {
-      url = 'http://16.170.117.21:3000/password/updatepassword';
+      url = 'http://'+window.location.host+'/password/updatepassword';
       userDetail = {
         resetId: window.location.pathname.replaceAll('/password/resetpassword/',''),
         password: event.target.password.value
@@ -64,7 +73,7 @@ async function getLogin() {
     }
     if (loginMode == 'login' || loginMode == 'signup') {
       localStorage.setItem('token',response.data.token); 
-      window.location.href = 'http://16.170.117.21:3000/expense';
+      window.location.href = 'http://'+window.location.host+'/expense';
     }
  
   } catch(err) {
@@ -85,7 +94,7 @@ async function addExpense() {
     console.log(expense);
     // const loginMode = document.getElementById('loginMode').value;
     const token = localStorage.getItem('token');
-    const response = await axios.post('http://16.170.117.21:3000/expense/addExpense', expense, { headers: { 'Authorization': token }}); 
+    const response = await axios.post('http://'+window.location.host+'/expense/addExpense', expense, { headers: { 'Authorization': token }}); 
     
     if(response.data.error) {
       document.getElementById('loginError').innerHTML = response.data.error.message;
@@ -111,7 +120,7 @@ async function deleteExpense() {
     console.log(expenseId);
     // const loginMode = document.getElementById('loginMode').value;
     const token = localStorage.getItem('token');
-    const response = await axios.get('http://16.170.117.21:3000/expense/deleteExpense/'+expenseId, { headers: { 'Authorization': token }}); 
+    const response = await axios.get('http://'+window.location.host+'/expense/deleteExpense/'+expenseId, { headers: { 'Authorization': token }}); 
     if(response.data.success) {
       document.getElementById('expense-'+expenseId).remove();
       return;
@@ -131,13 +140,13 @@ async function deleteExpense() {
 const buyPremium = async () => {
   try{
     const token = localStorage.getItem('token');
-    const response = await axios.get('http://16.170.117.21:3000/purchase/premium', { headers: { 'Authorization': token }}); 
+    const response = await axios.get('http://'+window.location.host+'/purchase/premium', { headers: { 'Authorization': token }}); 
     console.log(response);
     var options = {
       "key": response.data.key_id, 
       "order_id": response.data.order.id,
       "handler": async function (response) {
-        const resp = await axios.post('http://16.170.117.21:3000/purchase/updateTransaction',{
+        const resp = await axios.post('http://'+window.location.host+'/purchase/updateTransaction',{
           order_id: options.order_id,
           payment_id: response.razorpay_payment_id,
         }, { headers: { 'Authorization': token }})
@@ -163,7 +172,7 @@ const buyPremium = async () => {
 
 async function showLeaderboard() {
   try{
-    const response = await axios.get('http://16.170.117.21:3000/premium/leaderboard'); 
+    const response = await axios.get('http://'+window.location.host+'/premium/leaderboard'); 
     if(response.data) {
       document.getElementById('leadersboardData').innerHTML = response.data;
     }
@@ -186,7 +195,7 @@ function parseJwt (token) {
 
 async function download () {
   const token = localStorage.getItem('token');
-  const response = await axios.get('http://16.170.117.21:3000/expense/download', { headers: { 'Authorization': token }})
+  const response = await axios.get('http://'+window.location.host+'/expense/download', { headers: { 'Authorization': token }})
   if(response.status === 200) {
     var a = document.createElement('a');
     a.href = response.data.fileUrl;
