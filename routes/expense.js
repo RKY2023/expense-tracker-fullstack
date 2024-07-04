@@ -22,4 +22,6 @@ router.get('/expense/report', expenseController.reportExpense);
 
 router.get('/expense/download', userController.authenticate, expenseController.download);
 
+router.post('/expense/csvUpload', userController.authenticate, expenseController.csvUpload);
+
 module.exports = router;

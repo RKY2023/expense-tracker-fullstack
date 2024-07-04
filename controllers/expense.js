@@ -1,7 +1,9 @@
 const Expense = require("../models/expense");
 const sequelize = require("../util/database");
+const { QueryTypes } = require('sequelize');
 const S3Services = require("../services/S3Services");
 const UserServices = require("../services/userservices");
+const Transaction = require("../models/transaction");
 
 const getPage = (req, res, next) => {
   res.render("login", {
@@ -22,7 +24,7 @@ const getExpenseData = async (req, res, next) => {
   console.log("exp", req.body);
   let expenses;
   let pages = 0;
-  const limit = 2;
+  const limit = 10;
   let page = 0;
   if (req.body && req.body.page) {
     page = req.body.page;
@@ -102,10 +104,14 @@ const deleteExpense = async (req, res, next) => {
   }
 };
 
-const reportExpense = (req, res, next) => {
-  const expenses = [];
+const reportExpense = async (req, res, next) => {
+  const transactions = await Transaction.findAll({ where: { userId: 1 }, order: [['date', 'DESC']]});
+  const t_yr = await sequelize.query("SELECT DISTINCT YEAR(date) AS year FROM `transactions` WHERE userId =1", { type: QueryTypes.SELECT });
+  const t_mnyr = await sequelize.query("SELECT DISTINCT YEAR(date) AS year, MONTH(date) AS month FROM `transactions` WHERE userId =1 order by year desc, month desc", { type: QueryTypes.SELECT });
+  console.log(t_yr, t_mnyr);
+  console.log(transactions[0].date);
   res.render("reportExpense/reportExpense", {
-    expenses: expenses || [],
+    transactions: transactions || [],
   });
 };
 
@@ -124,6 +130,30 @@ const download = async (req, res, next) => {
   }
 };
 
+const csvUpload = async (req, res, next) => {
+  let trans;
+  try {
+    trans = await sequelize.transaction();
+    // console.log(req.body);
+    if( req.body.data) {
+      const data = JSON.parse(req.body.data);
+      console.log(data);
+      
+      for ( let i = 0; i< data.length; i++) {
+        req.user.createTransaction(data[i]);
+      }
+      
+    }
+    await trans.commit();
+    res.status(200).json({ success: true });
+
+  } catch (err) {
+    console.log(err);
+    trans.rollback();
+    res.status(500).json({ fileUrl: "", sucess: false, error: err });
+  }
+};
+
 module.exports = {
   getPage: getPage,
   getExpense: getExpense,
@@ -132,4 +162,5 @@ module.exports = {
   getExpenseData: getExpenseData,
   reportExpense,
   download,
+  csvUpload,
 };

@@ -4,13 +4,35 @@
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Descrition</th>
-                <th>Category</th>
-                <th>Income</th>
-                <th>Expense</th>
+                <th>Transaction Ref</th>
+                <th>Check ref</th>
+                <th>Credit</th>
+                <th>Debit</th>
+                <th>Balance</th>
             </tr>
         </thead>
         <tbody id="#">
             
+            <% for ( let t of transactions) { %>
+                <% 
+                const date = new Date(t.date);
+                const dateDay = date.getDate(); 
+                const dateMonth = date.toLocaleString('default', {month: 'short'});
+                const dateYear = date.getFullYear();
+                let dateOrdinal = 'th';
+                dateOrdinal = ([1, 21, 31].indexOf(dateDay) > -1) ? 'st' : dateOrdinal;
+                dateOrdinal = ([2, 22].indexOf(dateDay) > -1) ? 'nd' : dateOrdinal;
+                dateOrdinal = ([3, 23].indexOf(dateDay) > -1) ? 'rd' : dateOrdinal;
+                const ordinalDateString = `${dateDay}${dateOrdinal} ${dateMonth}, ${dateYear}`;
+                %>
+            <tr>
+                <td><%=ordinalDateString%></td>
+                <td><%=t.transactionIdRef%></td>
+                <td><%=t.chequeRefNo%></td>
+                <td><%=t.credit%></td>
+                <td><%=t.debit%></td>
+                <td><%=t.balance%></th>
+            </tr>
+            <% } %>
         </tbody>
     </table>

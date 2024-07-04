@@ -29,6 +29,7 @@ const authenticate = async (req, res, next) => {
   // console.log('rt')
   try {
       const token = req.header('Authorization');
+      console.log(token);
       const userData = jwt.verify(token, process.env.TOKEN_KEY);
       const user = await User.findByPk(userData.userId);
       // console.log(token);

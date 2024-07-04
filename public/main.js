@@ -205,3 +205,88 @@ async function download () {
     throw new Error(response.data.message);
   }
 }
+
+const uploadCSV = async () => {
+  const files = document.getElementById('csvFile').files;
+  if(files.length==0){
+  alert("Please choose any file...");
+  return;
+  }
+  const filename = files[0].name;
+  const extension = filename.substring(filename.lastIndexOf(".")).toUpperCase();
+  if (extension == '.CSV') {
+      //Here calling another method to read CSV file into json
+      // csvFileToJSON(files[0]);
+      console.log(files[0]);
+      try {
+        let reader = new FileReader();
+        reader.readAsBinaryString(files[0]);
+        // reader.onload = function(e) {
+        //   let csv = e.target.result;
+        //   CSVtoJSON(csv);
+        // }
+        reader.onload = (function(f) {
+          event.preventDefault();
+          return function(e) {
+              // Here you can use `e.target.result` or `this.result`
+              let csv = e.target.result;
+              const str = CSVtoJSON(csv);
+              sendJsonCsv(str);
+              // and `f.name`.
+          };
+        })(files[0]);
+      } catch (err) {
+        console.log(err);
+        throw new Error(err);
+      }
+  }else{
+      alert("Please select a valid csv file.");
+  }
+}
+
+const CSVtoJSON = (csv) => {
+  // let lines=csv.split("\n");
+  // let result = [];
+  // let headers=lines[0].split(",");
+  // for(let i=1;i<lines.length;i++){
+  //     let obj = {};
+  //     let currentline=lines[i].split(",");
+  //     for(let j=0;j<headers.length;j++){
+  //         obj[headers[j]] = currentline[j];
+  //     }
+  //     result.push(obj);
+  // }
+  let result = [];
+  let headers = [];
+  let rows = csv.split("\r\n");               
+  for (let i = 0; i < rows.length; i++) {
+      if(rows[i].length == 0)
+        continue;
+      let cells = rows[i].split(",");
+      let rowData = {};
+      for(let j=0;j<cells.length;j++){
+          if(i==0){
+              let headerName = cells[j].trim();
+              headers.push(headerName);
+          }else{
+              let key = headers[j];
+              if(key){
+                  rowData[key] = cells[j].trim();
+              }
+          }
+      }
+      //skip the first row (header) data
+      if(i!=0){
+          result.push(rowData);
+      }
+  }
+  return JSON.stringify(result);
+}
+
+const sendJsonCsv = async (str) => {
+  const token = localStorage.getItem('token');
+  const response = await axios.post('http://'+window.location.host+'/expense/csvUpload',{ data: str }, { headers: { 'Authorization': token }})
+  if(response.status === 200) {
+    alert('CSV uploaded Successfully');
+  }
+}
