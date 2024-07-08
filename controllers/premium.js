@@ -7,17 +7,18 @@ const getLeadersboard = async (req, res, next) => {
     //     attributes: ['userId', [sequelize.fn('sum', sequelize.col('amount')), 'totalExpense']],
     //     group: ['userId']
     // });
-    const leaderboard = await User.findAll({
-        attributes: ['id', 'name', [sequelize.fn('sum', sequelize.col('expenses.amount')), 'totalExpense']],
-        include: [
-            {
-                model: Expense,
-                attributes: [],
-            } 
-        ],
-        group: ['user.id'],
-        order: [['totalExpense', 'desc']]
-    });
+    const leaderboard = await User.find({});
+    // const leaderboard = await User.findAll({
+    //     attributes: ['id', 'name', [sequelize.fn('sum', sequelize.col('expenses.amount')), 'totalExpense']],
+    //     include: [
+    //         {
+    //             model: Expense,
+    //             attributes: [],
+    //         } 
+    //     ],
+    //     group: ['user.id'],
+    //     order: [['totalExpense', 'desc']]
+    // });
     
     
     // const totalExpense = {};

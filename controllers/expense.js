@@ -1,9 +1,10 @@
 const Expense = require("../models/expense");
-const sequelize = require("../util/database");
-const { QueryTypes } = require('sequelize');
+const User = require("../models/user");
+// const sequelize = require("../util/database");
+// const { QueryTypes } = require('sequelize');
 const S3Services = require("../services/S3Services");
 const UserServices = require("../services/userservices");
-const Transaction = require("../models/transaction");
+// const Transaction = require("../models/transaction");
 
 const getPage = (req, res, next) => {
   res.render("login", {
@@ -22,26 +23,27 @@ const getExpense = async (req, res, next) => {
 
 const getExpenseData = async (req, res, next) => {
   console.log("exp", req.body);
-  let expenses;
+  // let expenses;
   let pages = 0;
-  const limit = 10;
+  // const limit = 10;
   let page = 0;
-  if (req.body && req.body.page) {
-    page = req.body.page;
-    const offset = page * limit;
-    expenses = await req.user.getExpenses({ limit: limit, offset: offset });
-    pages = req.body.pages;
-  } else {
-    expenseCount = await req.user.getExpenses({
-      attributes: [
-          [sequelize.fn("COUNT", sequelize.col("id")), "expenseCount"]
-      ]
-    });
-    expenses = await req.user.getExpenses({ limit: limit, offset: 0 });
-    pages = Math.ceil(expenseCount[0].dataValues.expenseCount / limit);
-  }
-  // const expenses = await Expense.findAll();
-  console.log(pages);
+  // if (req.body && req.body.page) {
+  //   page = req.body.page;
+  //   const offset = page * limit;
+  //   expenses = await req.user.getExpenses({ limit: limit, offset: offset });
+  //   pages = req.body.pages;
+  // } else {
+  //   expenseCount = await req.user.getExpenses({
+  //     attributes: [
+  //         [sequelize.fn("COUNT", sequelize.col("id")), "expenseCount"]
+  //     ]
+  //   });
+  //   expenses = await req.user.getExpenses({ limit: limit, offset: 0 });
+  //   pages = Math.ceil(expenseCount[0].dataValues.expenseCount / limit);
+  // }
+  const expenses = await Expense.find({});
+  // console.log(pages);
+  console.log(expenses);
   res.render("expenseData", {
     expenses: expenses || [],
     pages,
@@ -50,54 +52,50 @@ const getExpenseData = async (req, res, next) => {
 };
 
 const addExpense = async (req, res, next) => {
-  console.log("aa", req.usera, req.body);
+  // console.log("aa", req.usera, req.body);
   const { amount, description, category } = req.body;
-  // Expense.creat e({ amount, description, category })
   let expense;
-  let transaction;
+  // let transaction;
   try {
-    transaction = await sequelize.transaction();
-    expense = await req.user.createExpense(
-      { amount, description, category },
-      { transaction }
-    );
-    await req.user.update(
-      {
-        totalExpense:
-          parseFloat(req.user.totalExpense) + parseFloat(expense.amount),
-      },
-      { transaction }
-    );
-    await transaction.commit();
+    // transaction = await sequelize.transaction();
+    expense = Expense.create(
+      { amount, description, category, userId: req.user },
+    )
+    let user = await User.findOne({ _id: req.user._id})
+    user.totalExpense = user.totalExpense + parseFloat(amount)
+    user.save();
   } catch (err) {
-    if (transaction) await transaction.rollback();
+    // if (transaction) await transaction.rollback();
   }
-  const expenses = [];
-  expenses.push(expense);
-  if (expense.id) {
-    res.render("expenseDataRow", {
-      expenses: expenses,
-    });
-  } else {
-    res.status(404).json(expense);
-  }
+  // const expenses = [];
+  // console.log(expense);
+  // expenses.push(expense);
+  // if (expense._id) {
+  //   res.render("expenseDataRow", {
+  //     expenses: expenses,
+  //   });
+  // } else {
+  //   res.status(404).json(expense);
+  // }
 };
 
 const deleteExpense = async (req, res, next) => {
   const expenseId = req.params.expenseId;
-  let transaction;
+  // let transaction;
   let isDestroyed;
   try {
-    transaction = await sequelize.transaction();
-    isDestroyed = await Expense.destroy(
-      { where: { id: expenseId, userId: req.user.id } },
-      { transaction }
-    );
-    await transaction.commit();
+    // transaction = await sequelize.transaction();
+    const expense = await Expense.findOne({ _id: expenseId });
+    const user = await User.findOne({ _id: req.user._id });
+    user.totalExpense = user.totalExpense - expense.amount;
+    user.save();
+    isDestroyed = await Expense.deleteOne({ _id: expenseId });
+    console.log('des', isDestroyed);
+    // await transaction.commit();
   } catch (err) {
-    await transaction.rollback();
+    // await transaction.rollback();
   }
-  if (isDestroyed == 1) {
+  if (isDestroyed.acknowledged) {
     res.status(201).json({ success: { message: "Expense deleted" } });
   } else {
     res.status(201).json({ error: { message: "delete Failed" } });
@@ -119,9 +117,10 @@ const download = async (req, res, next) => {
   try {
     const expenses = await UserServices.getExpenses(req);
     const stringifiedExpenses = JSON.stringify(expenses);
-    const userId = req.user.id;
+    const userId = req.user._id;
     const timestamp = Math.floor(new Date("2012.08.10").getTime() / 1000);
     const filename = `Expense_${userId}/${timestamp}_Expenses.txt`;
+    console.log(filename);
     const fileUrl = await S3Services.uploadToS3(stringifiedExpenses, filename);
     res.status(200).json({ fileUrl, success: true });
   } catch (err) {

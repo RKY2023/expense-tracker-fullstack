@@ -154,6 +154,7 @@ const buyPremium = async () => {
         document.getElementById('isPremium').removeAttribute('hidden');
         document.getElementById('isPremiumDownload').removeAttribute('hidden');
         document.getElementById('buyPremium').setAttribute('hidden','hidden');
+        console.log('token', resp);
         localStorage.setItem('token', resp.data.token);
       },
     };

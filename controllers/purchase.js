@@ -1,5 +1,6 @@
 const Razorpay = require("razorpay");
 const Order = require("../models/order");
+const User = require("../models/user");
 const userController = require("./user");
 
 const purchasePremium = (req, res, next) => {
@@ -12,10 +13,11 @@ const purchasePremium = (req, res, next) => {
 
     rzp.orders.create({ amount, currency: "INR" }, (err, order) => {
       if (err) {
-        throw new Error(JSON.stringify(err));
+        console.log(err);
+        // throw new Error(JSON.stringify(err));
       }
-      req.user
-        .createOrder({ orderid: order.id, status: "PENDING" })
+
+        Order.create({ orderid: order.id, status: "PENDING" })
         .then(() => {
           return res.status(201).json({ order, key_id: rzp.key_id });
         })
@@ -32,13 +34,28 @@ const purchasePremium = (req, res, next) => {
 const updateTransaction = async (req, res, next) => {
   try {
     const { payment_id, order_id } = req.body;
-    const order = await Order.findOne({ where: { orderid: order_id } });
-    const p1 = await order.update({
-      paymentid: payment_id,
-      status: "SUCCESSFUL",
-    });
-    const p2 = await req.user.update({ ispremiumuser: true });
+    const order = await Order.findOne({ orderid: order_id });
+    const p1 = await new Promise((resolve, reject) => {
+      order.paymentid = payment_id;
+      order.status = "SUCCESSFUL";
+      order.save();
+      resolve();
+    })
+    const p2 = await new Promise(async (resolve, reject) => {
+      // console.log( req.user.userId)
+      const user = await User.findOne({ _id: req.user._id});
+      // console.log('ttt', user);
+      user.ispremiumuser = true ;
+      user.save();
+      resolve();
+    })
+
+
     Promise.all([p1, p2])
+      // .then(() => {
+      //   // console.log(req.user);
+      //   console.log(User.findOne({ _id: req.user.userId}))
+      // })
       .then(() => {
         return res
           .status(202)

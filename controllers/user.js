@@ -29,10 +29,11 @@ const authenticate = async (req, res, next) => {
   // console.log('rt')
   try {
       const token = req.header('Authorization');
-      console.log(token);
-      const userData = jwt.verify(token, process.env.TOKEN_KEY);
-      const user = await User.findByPk(userData.userId);
       // console.log(token);
+      const userData = jwt.verify(token, process.env.TOKEN_KEY);
+      console.log(userData);
+      const user = await User.findById({ _id: userData.userId });
+      console.log('aa', user);
       req.user = user;
       next();
   } catch(err) {
@@ -43,11 +44,11 @@ const authenticate = async (req, res, next) => {
 
 const signupAPI = (req, res, next) => {
   const { name, email, password } = req.body;
-  console.log(name, email, password);
+  // console.log(name, email, password);
   bcrypt.hash(password, 10, async (err, result) => {
-    await User.create({ name, email, password: result })
+    User.create({ name, email, password: result })
     .then((user) => {
-      const token = generateAccessToken({userId: user.id, username: user.name, isPremium: user.ispremiumuser});
+      const token = generateAccessToken({userId: user._id, username: user.name, isPremium: user.ispremiumuser});
       res.status(203).json({ user: user, token: token });
     })
     .catch((err) => {
@@ -65,18 +66,17 @@ const signupAPI = (req, res, next) => {
 
 const loginAPI = (req, res, next) => {
     const { email, password } = req.body;
-    console.log( email, password);
-    User.findAll({ where: { email: email } })
-      .then((users) => {
-        const user = users[0];
-        if(users.length == 0){
+    // console.log( email, password);
+    User.findOne({ email: email })
+      .then((user) => {
+        if(user.length == 0){
             res.status(200).json({ error: { message: 'User doesn\'t exist'}});
         } else if(user.password != password) {
             bcrypt.compare(password, user.password, (err, matched) => {
-              console.log(password, user.password, matched);
+              // console.log(password, user.password, matched);
                 if( matched ===  true) {
                   user.password = '';
-                  const token = generateAccessToken({userId: user.id, username: user.name, isPremium: user.ispremiumuser});
+                  const token = generateAccessToken({userId: user._id, username: user.name, isPremium: user.ispremiumuser});
                   res.status(203).json({ user: user, token: token });                    
                 } else {
                   res.status(401).json({ error: { message: 'Invalid Password'}});        

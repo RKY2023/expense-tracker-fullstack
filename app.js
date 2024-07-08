@@ -6,18 +6,19 @@ const fs = require("fs");
 var cors = require("cors");
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 // const helmet = require("helmet");
 // const compression = require("compression");
 // const morgan = require("morgan");
 // const helmet = require('compression');
 
 
-const sequelize = require("./util/database");
-const User = require("./models/user");
-const Expense = require("./models/expense");
-const Order = require("./models/order");
-const forgotPasswordRequests = require("./models/forgotPassword");
-const Transaction = require("./models/transaction");
+// const sequelize = require("./util/database");
+// const User = require("./models/user");
+// const Expense = require("./models/expense");
+// const Order = require("./models/order");
+// const forgotPasswordRequests = require("./models/forgotPassword");
+// const Transaction = require("./models/transaction");
 
 const app = express();
 
@@ -32,7 +33,7 @@ const userRoutes = require("./routes/user");
 const apiRoutes = require("./routes/api");
 const purchaseRoutes = require("./routes/purchase");
 const premiumRoutes = require("./routes/premium");
-const passwordRoutes = require("./routes/password");
+// const passwordRoutes = require("./routes/password");
 
 // const accessLogStream = fs.createWriteStream(
 //   path.join(__dirname, "access.log"),
@@ -52,32 +53,26 @@ app.use("/api", apiRoutes);
 app.use(expenseRoutes);
 app.use(purchaseRoutes);
 app.use("/premium", premiumRoutes);
-app.use("/password", passwordRoutes);
-console.log('t');
-// app.use((req, res) => {
-//   console.log('urll:', req.url);
-//   // res.sendFile(path.join(__dirname,`public/${req.url}`));
-// })
+// app.use("/password", passwordRoutes);
 
-User.hasMany(Expense);
-Expense.belongsTo(User);
-
-User.hasMany(Order);
-Order.belongsTo(User);
-
-User.hasMany(forgotPasswordRequests);
-forgotPasswordRequests.belongsTo(User);
-
-User.hasMany(Transaction);
-Transaction.belongsTo(User);
-
-sequelize
-  // .sync({ force: true})
-  .sync()
-  .then((user) => {
-    // https
-    //   .createServer({ key: privateKey, cert: certificate }, app)
-    //   .listen(process.env.PORT || 3000);
-    app.listen( process.env.PORT || 3000);
-  })
-  .catch((err) => console.log(err));
+mongoose
+.connect(process.env.MONGODB_URL)
+.then((result) => {
+  // User.findOne().then( user => {
+  //   if(!user) {
+  //     const user = new User({
+  //       name: 'Raj',
+  //       email: 'Raj@test.com',
+  //       cart: {
+  //         items: []
+  //       }
+  //     });
+  //     user.save();
+  //   }
+  // })
+  // console.log('COnnected');
+  app.listen(process.env.PORT || 3000);
+})
+.catch((err)=>{
+  console.log(err);
+})
