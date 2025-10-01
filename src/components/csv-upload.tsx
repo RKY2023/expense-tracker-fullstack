@@ -207,8 +207,8 @@ export function CSVUpload({ onUploadComplete, categories }: CSVUploadProps) {
               </div>
 
               <div>
-                <h4 className="font-medium mb-2">Example:</h4>
-                <div className="bg-gray-50 p-3 rounded text-sm font-mono">
+                <h4 className="font-medium mb-2 text-foreground">Example:</h4>
+                <div className="bg-muted p-3 rounded text-sm font-mono text-muted-foreground">
                   amount,description,category,date
                   <br />
                   25.50,Lunch,Food & Dining,2024-01-15
@@ -223,7 +223,7 @@ export function CSVUpload({ onUploadComplete, categories }: CSVUploadProps) {
                   {categories.map((category) => (
                     <span
                       key={category.id}
-                      className="px-2 py-1 text-xs rounded-full text-white"
+                      className="px-2 py-1 text-xs rounded-full"
                       style={{ backgroundColor: category.color }}
                     >
                       {category.name}
