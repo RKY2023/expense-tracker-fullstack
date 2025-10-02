@@ -46,23 +46,17 @@ export const locationApi = createApi({
   reducerPath: 'locationApi',
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_HOST,
-    prepareHeaders: (headers) => {
-      // Add authentication token if available
-      const token = localStorage.getItem('token') || localStorage.getItem('access_token')
+    prepareHeaders: (headers, { getState }) => {
+      // Get token from Redux state
+      const token = (getState() as any).auth.accessToken
       if (token) {
         headers.set('Authorization', `Bearer ${token}`)
       }
 
-      // If using API key from env instead:
-      // const apiKey = import.meta.env.VITE_API_KEY
-      // if (apiKey) {
-      //   headers.set('X-API-Key', apiKey)
-      // }
-
       headers.set('Content-Type', 'application/json')
       return headers
     },
-    credentials: 'include', // Include cookies if using session auth
+    credentials: 'include',
   }),
   endpoints: (builder) => ({
     getCountries: builder.query<ApiResponse<Country>, void>({

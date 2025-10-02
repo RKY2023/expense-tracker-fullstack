@@ -1,9 +1,11 @@
 "use client"
 
-import { BarChart3, Calendar, Upload, Plus, Home, TrendingUp, Clock, Moon, Sun } from "lucide-react"
+import { BarChart3, Calendar, Upload, Plus, Home, TrendingUp, Clock, Moon, Sun, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
+import { useDispatch, useSelector } from "react-redux"
+import { logout } from "@/store/authSlice"
 
 interface SidebarProps {
   activeView: string
@@ -11,6 +13,9 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeView, setActiveView }: SidebarProps) {
+  const dispatch = useDispatch()
+  const username = useSelector((state: any) => state.auth.username)
+
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
     { id: "daily", label: "Daily View", icon: Clock },
@@ -19,12 +24,17 @@ export function Sidebar({ activeView, setActiveView }: SidebarProps) {
     { id: "add", label: "Add Expense", icon: Plus },
     { id: "upload", label: "Upload CSV", icon: Upload },
     { id: "location", label: "Location", icon: Upload },
+    { id: "bank-statement", label: "Bank Statement", icon: Upload },
   ]
 
   const { theme, setTheme } = useTheme()
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark")
+  }
+
+  const handleLogout = () => {
+    dispatch(logout())
   }
 
   return (
@@ -51,10 +61,19 @@ export function Sidebar({ activeView, setActiveView }: SidebarProps) {
             )
           })}
         </nav>
-        <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+          {username && (
+            <div className="px-3 py-2 text-sm text-gray-600 dark:text-gray-400">
+              Logged in as: <span className="font-semibold">{username}</span>
+            </div>
+          )}
           <Button variant="ghost" size="sm" onClick={toggleTheme} className="w-full justify-start gap-3">
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             {theme === "dark" ? "Light Mode" : "Dark Mode"}
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleLogout} className="w-full justify-start gap-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20">
+            <LogOut className="h-4 w-4" />
+            Logout
           </Button>
         </div>
       </div>

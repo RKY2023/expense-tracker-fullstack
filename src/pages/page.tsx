@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Provider } from "react-redux"
-import { store } from "@/store/store"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Sidebar } from "@/components/sidebar"
 import { Dashboard } from "@/components/dashboard"
@@ -87,13 +85,11 @@ export default function ExpenseTracker() {
   }
 
   return (
-    <Provider store={store}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-          <Sidebar activeView={activeView} setActiveView={setActiveView} />
-          <main className="flex-1 overflow-auto">{renderView()}</main>
-        </div>
-      </ThemeProvider>
-    </Provider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+        <Sidebar activeView={activeView} setActiveView={setActiveView} />
+        <main className="flex-1 overflow-auto">{renderView()}</main>
+      </div>
+    </ThemeProvider>
   )
 }
