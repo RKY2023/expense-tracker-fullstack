@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Provider } from "react-redux"
+import { store } from "@/store/store"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Sidebar } from "@/components/sidebar"
 import { Dashboard } from "@/components/dashboard"
@@ -9,6 +11,8 @@ import { MonthlyView } from "@/components/monthly-view"
 import { YearlyView } from "@/components/yearly-view"
 import { CSVUpload } from "@/components/csv-upload"
 import { AddExpenseForm } from "@/components/add-expense-form"
+import { LocationView } from "@/components/location-view"
+import { BankStatementUpload } from "@/components/bank-statement-upload"
 import { supabase, type Expense, type Category } from "@/lib/supabase"
 
 export default function ExpenseTracker() {
@@ -73,17 +77,23 @@ export default function ExpenseTracker() {
         return <CSVUpload onUploadComplete={handleExpenseAdded} categories={categories} />
       case "add":
         return <AddExpenseForm categories={categories} onExpenseAdded={handleExpenseAdded} />
+      case "location":
+        return <LocationView />
+      case "bank-statement":
+        return <BankStatementUpload />
       default:
         return <Dashboard expenses={expenses} categories={categories} />
     }
   }
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-        <Sidebar activeView={activeView} setActiveView={setActiveView} />
-        <main className="flex-1 overflow-auto">{renderView()}</main>
-      </div>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+          <Sidebar activeView={activeView} setActiveView={setActiveView} />
+          <main className="flex-1 overflow-auto">{renderView()}</main>
+        </div>
+      </ThemeProvider>
+    </Provider>
   )
 }

@@ -18,6 +18,7 @@ export function Sidebar({ activeView, setActiveView }: SidebarProps) {
     { id: "yearly", label: "Yearly View", icon: TrendingUp },
     { id: "add", label: "Add Expense", icon: Plus },
     { id: "upload", label: "Upload CSV", icon: Upload },
+    { id: "location", label: "Location", icon: Upload },
   ]
 
   const { theme, setTheme } = useTheme()
