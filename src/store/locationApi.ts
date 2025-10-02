@@ -70,7 +70,7 @@ export const locationApi = createApi({
     }),
     uploadBankStatement: builder.mutation<BankStatementUploadResponse, BankStatementUploadRequest>({
       query: (body) => ({
-        url: '/expenses/bank-statements/',
+        url: '/expenses/bank-statements/upload',
         method: 'POST',
         body,
       }),
