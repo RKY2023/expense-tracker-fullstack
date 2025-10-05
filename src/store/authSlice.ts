@@ -22,18 +22,22 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<{
         accessToken: string
-        refreshToken: string
+        refreshToken?: string
         username?: string
       }>
     ) => {
       state.accessToken = action.payload.accessToken
-      state.refreshToken = action.payload.refreshToken
+      if (action.payload.refreshToken) {
+        state.refreshToken = action.payload.refreshToken
+      }
       state.username = action.payload.username || state.username
       state.isAuthenticated = true
 
       // Persist to localStorage
       localStorage.setItem('access_token', action.payload.accessToken)
-      localStorage.setItem('refresh_token', action.payload.refreshToken)
+      if (action.payload.refreshToken) {
+        localStorage.setItem('refresh_token', action.payload.refreshToken)
+      }
       if (action.payload.username) {
         localStorage.setItem('username', action.payload.username)
       }

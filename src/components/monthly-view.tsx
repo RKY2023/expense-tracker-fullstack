@@ -69,8 +69,8 @@ export function MonthlyView({ expenses, categories }: MonthlyViewProps) {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Monthly View</h1>
-          <p className="text-gray-600">Track your monthly expenses</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Monthly View</h1>
+          <p className="text-gray-600 dark:text-gray-400">Track your monthly expenses</p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -93,7 +93,7 @@ export function MonthlyView({ expenses, categories }: MonthlyViewProps) {
             <CardDescription>Total expenses this month</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-blue-600">${monthlyTotal.toFixed(2)}</div>
+            <div className="text-3xl font-bold text-blue-600">₹{monthlyTotal.toFixed(2)}</div>
             <p className="text-sm text-gray-500">{monthlyExpenses.length} transactions</p>
           </CardContent>
         </Card>
@@ -104,7 +104,7 @@ export function MonthlyView({ expenses, categories }: MonthlyViewProps) {
             <CardDescription>Average spending per day</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-600">${(monthlyTotal / new Date().getDate()).toFixed(2)}</div>
+            <div className="text-3xl font-bold text-green-600">₹{(monthlyTotal / new Date().getDate()).toFixed(2)}</div>
             <p className="text-sm text-gray-500">Based on current month</p>
           </CardContent>
         </Card>
@@ -118,7 +118,7 @@ export function MonthlyView({ expenses, categories }: MonthlyViewProps) {
             {categoryTotals.length > 0 ? (
               <>
                 <div className="text-2xl font-bold">{categoryTotals[0].name}</div>
-                <p className="text-sm text-gray-500">${categoryTotals[0].amount.toFixed(2)}</p>
+                <p className="text-sm text-gray-500">₹{categoryTotals[0].amount.toFixed(2)}</p>
               </>
             ) : (
               <p className="text-gray-500">No expenses this month</p>
@@ -139,7 +139,7 @@ export function MonthlyView({ expenses, categories }: MonthlyViewProps) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="day" />
                 <YAxis />
-                <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, "Amount"]} />
+                <Tooltip formatter={(value) => [`₹${Number(value).toFixed(2)}`, "Amount"]} />
                 <Bar dataKey="amount" fill="#3B82F6" />
               </BarChart>
             </ResponsiveContainer>
@@ -162,7 +162,7 @@ export function MonthlyView({ expenses, categories }: MonthlyViewProps) {
                       <p className="text-sm text-gray-500">{category.count} transactions</p>
                     </div>
                   </div>
-                  <span className="font-semibold">${category.amount.toFixed(2)}</span>
+                  <span className="font-semibold">₹{category.amount.toFixed(2)}</span>
                 </div>
               ))}
             </div>

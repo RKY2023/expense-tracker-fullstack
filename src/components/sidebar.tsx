@@ -1,6 +1,6 @@
 "use client"
 
-import { BarChart3, Calendar, Upload, Plus, Home, TrendingUp, Clock, Moon, Sun, LogOut } from "lucide-react"
+import { BarChart3, Calendar, Upload, Plus, Home, TrendingUp, Clock, Moon, Sun, LogOut, MapPin, FileSpreadsheet, FileDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
@@ -23,8 +23,9 @@ export function Sidebar({ activeView, setActiveView }: SidebarProps) {
     { id: "yearly", label: "Yearly View", icon: TrendingUp },
     { id: "add", label: "Add Expense", icon: Plus },
     { id: "upload", label: "Upload CSV", icon: Upload },
-    { id: "location", label: "Location", icon: Upload },
-    { id: "bank-statement", label: "Bank Statement", icon: Upload },
+    { id: "location", label: "Location", icon: MapPin },
+    { id: "bank-statement", label: "Bank Statement", icon: FileSpreadsheet },
+    { id: "export-excel", label: "Export Excel", icon: FileDown },
   ]
 
   const { theme, setTheme } = useTheme()

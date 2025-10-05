@@ -11,7 +11,10 @@ import { CSVUpload } from "@/components/csv-upload"
 import { AddExpenseForm } from "@/components/add-expense-form"
 import { LocationView } from "@/components/location-view"
 import { BankStatementUpload } from "@/components/bank-statement-upload"
-import { supabase, type Expense, type Category } from "@/lib/supabase"
+import { ExportExpenses } from "@/components/export-expenses"
+import { TokenRefresh } from "@/components/token-refresh"
+import { useGetCategoriesQuery, useGetExpensesQuery } from "@/store/locationApi"
+import type { Expense, Category } from "@/lib/supabase"
 
 export default function ExpenseTracker() {
   const [activeView, setActiveView] = useState("dashboard")
@@ -19,38 +22,24 @@ export default function ExpenseTracker() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
 
+  const { data: categoriesData } = useGetCategoriesQuery()
+  const { data: expensesData, isLoading: isLoadingExpenses, refetch: refetchExpenses } = useGetExpensesQuery()
+
   useEffect(() => {
-    fetchData()
-  }, [])
-
-  const fetchData = async () => {
-    try {
-      const [expensesResult, categoriesResult] = await Promise.all([
-        supabase
-          .from("expenses")
-          .select(`
-            *,
-            categories (
-              id,
-              name,
-              color
-            )
-          `)
-          .order("date", { ascending: false }),
-        supabase.from("categories").select("*").order("name"),
-      ])
-
-      if (expensesResult.data) setExpenses(expensesResult.data)
-      if (categoriesResult.data) setCategories(categoriesResult.data)
-    } catch (error) {
-      console.error("Error fetching data:", error)
-    } finally {
-      setLoading(false)
+    if (categoriesData?.data) {
+      setCategories(categoriesData.data)
     }
-  }
+  }, [categoriesData])
+
+  useEffect(() => {
+    if (expensesData?.results) {
+      setExpenses(expensesData.results)
+    }
+    setLoading(isLoadingExpenses)
+  }, [expensesData, isLoadingExpenses])
 
   const handleExpenseAdded = () => {
-    fetchData()
+    refetchExpenses()
   }
 
   if (loading) {
@@ -79,6 +68,8 @@ export default function ExpenseTracker() {
         return <LocationView />
       case "bank-statement":
         return <BankStatementUpload />
+      case "export-excel":
+        return <ExportExpenses />
       default:
         return <Dashboard expenses={expenses} categories={categories} />
     }
@@ -86,6 +77,7 @@ export default function ExpenseTracker() {
 
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <TokenRefresh />
       <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
         <Sidebar activeView={activeView} setActiveView={setActiveView} />
         <main className="flex-1 overflow-auto">{renderView()}</main>

@@ -10,7 +10,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export type Expense = {
   id: number
-  amount: number
+  amount: number | string
   description: string
   category_id: number
   date: string

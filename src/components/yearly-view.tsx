@@ -65,8 +65,8 @@ export function YearlyView({ expenses, categories }: YearlyViewProps) {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Yearly View</h1>
-          <p className="text-gray-600">Track your yearly expenses</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Yearly View</h1>
+          <p className="text-gray-600 dark:text-gray-400">Track your yearly expenses</p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -87,7 +87,7 @@ export function YearlyView({ expenses, categories }: YearlyViewProps) {
             <CardDescription>Total expenses for {selectedYear}</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-blue-600">${yearlyTotal.toFixed(2)}</div>
+            <div className="text-3xl font-bold text-blue-600">₹{yearlyTotal.toFixed(2)}</div>
             <p className="text-sm text-gray-500">{yearlyExpenses.length} transactions</p>
           </CardContent>
         </Card>
@@ -98,7 +98,7 @@ export function YearlyView({ expenses, categories }: YearlyViewProps) {
             <CardDescription>Average spending per month</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-600">${averageMonthly.toFixed(2)}</div>
+            <div className="text-3xl font-bold text-green-600">₹{averageMonthly.toFixed(2)}</div>
             <p className="text-sm text-gray-500">Per month</p>
           </CardContent>
         </Card>
@@ -110,7 +110,7 @@ export function YearlyView({ expenses, categories }: YearlyViewProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{highestMonth?.month || "N/A"}</div>
-            <p className="text-sm text-gray-500">${highestMonth?.amount.toFixed(2) || "0.00"}</p>
+            <p className="text-sm text-gray-500">₹{highestMonth?.amount.toFixed(2) || "0.00"}</p>
           </CardContent>
         </Card>
 
@@ -123,7 +123,7 @@ export function YearlyView({ expenses, categories }: YearlyViewProps) {
             {categoryTotals.length > 0 ? (
               <>
                 <div className="text-xl font-bold">{categoryTotals[0].name}</div>
-                <p className="text-sm text-gray-500">${categoryTotals[0].amount.toFixed(2)}</p>
+                <p className="text-sm text-gray-500">₹{categoryTotals[0].amount.toFixed(2)}</p>
               </>
             ) : (
               <p className="text-gray-500">No expenses this year</p>
@@ -144,7 +144,7 @@ export function YearlyView({ expenses, categories }: YearlyViewProps) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
-                <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, "Amount"]} />
+                <Tooltip formatter={(value) => [`₹${Number(value).toFixed(2)}`, "Amount"]} />
                 <Line type="monotone" dataKey="amount" stroke="#3B82F6" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
@@ -162,7 +162,7 @@ export function YearlyView({ expenses, categories }: YearlyViewProps) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" />
                 <YAxis dataKey="name" type="category" width={80} />
-                <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, "Amount"]} />
+                <Tooltip formatter={(value) => [`₹${Number(value).toFixed(2)}`, "Amount"]} />
                 <Bar dataKey="amount" fill="#3B82F6" />
               </BarChart>
             </ResponsiveContainer>
@@ -188,7 +188,7 @@ export function YearlyView({ expenses, categories }: YearlyViewProps) {
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="font-semibold text-lg">${category.amount.toFixed(2)}</span>
+                  <span className="font-semibold text-lg">₹{category.amount.toFixed(2)}</span>
                   <p className="text-sm text-gray-500">
                     {((category.amount / yearlyTotal) * 100).toFixed(1)}% of total
                   </p>

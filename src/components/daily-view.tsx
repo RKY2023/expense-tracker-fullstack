@@ -36,8 +36,8 @@ export function DailyView({ expenses, categories }: DailyViewProps) {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Daily View</h1>
-          <p className="text-gray-600">Track your daily expenses</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Daily View</h1>
+          <p className="text-gray-600 dark:text-gray-400">Track your daily expenses</p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -64,7 +64,7 @@ export function DailyView({ expenses, categories }: DailyViewProps) {
           <CardDescription>Total expenses for {selectedDate.toLocaleDateString()}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold text-blue-600">${dailyTotal.toFixed(2)}</div>
+          <div className="text-3xl font-bold text-blue-600">₹{dailyTotal.toFixed(2)}</div>
           <p className="text-sm text-gray-500">{dailyExpenses.length} transactions</p>
         </CardContent>
       </Card>
@@ -91,7 +91,7 @@ export function DailyView({ expenses, categories }: DailyViewProps) {
                       <p className="text-sm text-gray-500">{expense.categories?.name}</p>
                     </div>
                   </div>
-                  <span className="font-semibold text-lg">${Number(expense.amount).toFixed(2)}</span>
+                  <span className="font-semibold text-lg">₹{Number(expense.amount).toFixed(2)}</span>
                 </div>
               ))}
             </div>

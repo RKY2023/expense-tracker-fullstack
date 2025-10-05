@@ -86,8 +86,8 @@ export function Dashboard({ expenses, categories }: DashboardProps) {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">Overview of your expenses</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <p className="text-gray-600 dark:text-gray-400">Overview of your expenses</p>
       </div>
 
       {/* Stats Cards */}
@@ -98,7 +98,7 @@ export function Dashboard({ expenses, categories }: DashboardProps) {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalExpenses.toFixed(2)}</div>
+            <div className="text-2xl font-bold">₹{totalExpenses.toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">All time</p>
           </CardContent>
         </Card>
@@ -109,7 +109,7 @@ export function Dashboard({ expenses, categories }: DashboardProps) {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${thisMonthExpenses.toFixed(2)}</div>
+            <div className="text-2xl font-bold">₹{thisMonthExpenses.toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">
               {monthlyChange >= 0 ? "+" : ""}
               {monthlyChange.toFixed(1)}% from last month
@@ -127,7 +127,7 @@ export function Dashboard({ expenses, categories }: DashboardProps) {
             )}
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${(thisMonthExpenses / new Date().getDate()).toFixed(2)}</div>
+            <div className="text-2xl font-bold">₹{(thisMonthExpenses / new Date().getDate()).toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">This month</p>
           </CardContent>
         </Card>
@@ -157,7 +157,7 @@ export function Dashboard({ expenses, categories }: DashboardProps) {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, "Amount"]} />
+                <Tooltip formatter={(value) => [`₹${Number(value).toFixed(2)}`, "Amount"]} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -174,7 +174,7 @@ export function Dashboard({ expenses, categories }: DashboardProps) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
-                <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, "Amount"]} />
+                <Tooltip formatter={(value) => [`₹${Number(value).toFixed(2)}`, "Amount"]} />
                 <Line type="monotone" dataKey="amount" stroke="#3B82F6" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
@@ -204,7 +204,7 @@ export function Dashboard({ expenses, categories }: DashboardProps) {
                     </p>
                   </div>
                 </div>
-                <span className="font-semibold">${Number(expense.amount).toFixed(2)}</span>
+                <span className="font-semibold">₹{Number(expense.amount).toFixed(2)}</span>
               </div>
             ))}
           </div>
