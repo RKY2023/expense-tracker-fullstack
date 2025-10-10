@@ -2,14 +2,16 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { logout } from './authSlice'
 import CryptoJS from 'crypto-js'
+import { env } from '@/config/env'
 
 interface LoginRequest {
-  username: string
+  email: string
   password: string
 }
 
 interface LoginResponse {
   msg: string
+  username?: string
   token: {
     refresh: string
     access: string
@@ -17,13 +19,27 @@ interface LoginResponse {
 }
 
 interface RegisterRequest {
+  email: string
   username: string
   password: string
+  password2: string
+}
+
+interface User {
+  id: number
+  username: string
+  email: string
+  first_name: string
+  last_name: string
+  mobile: string
+  date_of_birth: string | null
+  address: string
 }
 
 interface RegisterResponse {
-  msg: string
-  token: {
+  message: string
+  user: User
+  tokens: {
     refresh: string
     access: string
   }
@@ -40,11 +56,8 @@ interface RefreshTokenResponse {
 
 // Encryption function for payload
 const encryptPayload = (username: string, password: string) => {
-  // Use a consistent encryption key - you may want to store this in env
-  const encryptionKey = import.meta.env.VITE_ENCRYPTION_KEY || 'default-secret-key'
-
-  const encryptedUsername = CryptoJS.AES.encrypt(username, encryptionKey).toString()
-  const encryptedPassword = CryptoJS.AES.encrypt(password, encryptionKey).toString()
+  const encryptedUsername = CryptoJS.AES.encrypt(username, env.encryptionKey).toString()
+  const encryptedPassword = CryptoJS.AES.encrypt(password, env.encryptionKey).toString()
 
   return {
     username: encryptedUsername,
@@ -53,7 +66,7 @@ const encryptPayload = (username: string, password: string) => {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_HOST,
+  baseUrl: env.apiHost,
   prepareHeaders: (headers) => {
     headers.set('Content-Type', 'application/json')
     return headers
@@ -88,10 +101,10 @@ export const authApi = createApi({
   baseQuery: baseQueryWithLogout,
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
-      query: ({ username, password }) => ({
+      query: ({ email, password }) => ({
         url: '/user/login/',
         method: 'POST',
-        body: { username, password },
+        body: { email, password },
       }),
       transformResponse: (response: LoginResponse) => {
         // Store tokens in localStorage
@@ -101,15 +114,15 @@ export const authApi = createApi({
       },
     }),
     register: builder.mutation<RegisterResponse, RegisterRequest>({
-      query: ({ username, password }) => ({
+      query: ({ email, username, password, password2 }) => ({
         url: '/user/register/',
         method: 'POST',
-        body: { username, password },
+        body: { email, username, password, password2 },
       }),
       transformResponse: (response: RegisterResponse) => {
         // Store tokens in localStorage
-        localStorage.setItem('access_token', response.token.access)
-        localStorage.setItem('refresh_token', response.token.refresh)
+        localStorage.setItem('access_token', response.tokens.access)
+        localStorage.setItem('refresh_token', response.tokens.refresh)
         return response
       },
     }),

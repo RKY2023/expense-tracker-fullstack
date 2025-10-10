@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { logout } from './authSlice'
+import { env } from '@/config/env'
 
 interface Country {
   id: number
@@ -81,7 +82,7 @@ interface ExpensesApiResponse {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_HOST,
+  baseUrl: env.apiHost,
   prepareHeaders: (headers, { getState }) => {
     // Get token from Redux state
     const token = (getState() as any).auth.accessToken

@@ -15,12 +15,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from "lucide-react"
 
-const authSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 })
 
-type AuthFormData = z.infer<typeof authSchema>
+const registerSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  password2: z.string().min(6, "Password must be at least 6 characters"),
+  username: z.string().min(3, "Username must be at least 3 characters"),
+}).refine((data) => data.password === data.password2, {
+  message: "Passwords don't match",
+  path: ["password2"],
+})
+
+type LoginFormData = z.infer<typeof loginSchema>
+type RegisterFormData = z.infer<typeof registerSchema>
 
 export function LoginForm() {
   const dispatch = useDispatch()
@@ -29,35 +40,52 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<"login" | "register">("login")
 
-  const {
-    register: registerField,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<AuthFormData>({
-    resolver: zodResolver(authSchema),
+  const loginForm = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
   })
 
-  const onSubmit = async (data: AuthFormData) => {
+  const registerForm = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+  })
+
+  const onLoginSubmit = async (data: LoginFormData) => {
     setError(null)
     try {
-      const result =
-        activeTab === "login"
-          ? await login({ username: data.username, password: data.password }).unwrap()
-          : await register({ username: data.username, password: data.password }).unwrap()
-
+      const result = await login({ email: data.email, password: data.password }).unwrap()
       dispatch(
         setCredentials({
           accessToken: result.token.access,
           refreshToken: result.token.refresh,
-          username: data.username,
+          username: result.username || data.email,
         })
       )
-
-      reset()
+      loginForm.reset()
     } catch (err: any) {
       setError(err?.data?.message || err?.data?.msg || "An error occurred. Please try again.")
-      console.error("Authentication error:", err)
+      console.error("Login error:", err)
+    }
+  }
+
+  const onRegisterSubmit = async (data: RegisterFormData) => {
+    setError(null)
+    try {
+      const result = await register({
+        email: data.email,
+        username: data.username,
+        password: data.password,
+        password2: data.password2
+      }).unwrap()
+      dispatch(
+        setCredentials({
+          accessToken: result.tokens.access,
+          refreshToken: result.tokens.refresh,
+          username: result.user.username,
+        })
+      )
+      registerForm.reset()
+    } catch (err: any) {
+      setError(err?.data?.message || err?.data?.msg || "An error occurred. Please try again.")
+      console.error("Register error:", err)
     }
   }
 
@@ -80,7 +108,7 @@ export function LoginForm() {
             </TabsList>
 
             <TabsContent value="login">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
+              <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4 mt-4">
                 {error && (
                   <Alert variant="destructive">
                     <AlertDescription>{error}</AlertDescription>
@@ -88,15 +116,16 @@ export function LoginForm() {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="login-username">Username</Label>
+                  <Label htmlFor="login-email">Email</Label>
                   <Input
-                    id="login-username"
-                    placeholder="Enter your username"
-                    {...registerField("username")}
+                    id="login-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    {...loginForm.register("email")}
                     disabled={isLoading}
                   />
-                  {errors.username && (
-                    <p className="text-sm text-red-500">{errors.username.message}</p>
+                  {loginForm.formState.errors.email && (
+                    <p className="text-sm text-red-500">{loginForm.formState.errors.email.message}</p>
                   )}
                 </div>
 
@@ -106,16 +135,16 @@ export function LoginForm() {
                     id="login-password"
                     type="password"
                     placeholder="Enter your password"
-                    {...registerField("password")}
+                    {...loginForm.register("password")}
                     disabled={isLoading}
                   />
-                  {errors.password && (
-                    <p className="text-sm text-red-500">{errors.password.message}</p>
+                  {loginForm.formState.errors.password && (
+                    <p className="text-sm text-red-500">{loginForm.formState.errors.password.message}</p>
                   )}
                 </div>
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
+                  {isLoginLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Logging in...
@@ -128,42 +157,75 @@ export function LoginForm() {
             </TabsContent>
 
             <TabsContent value="register">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
+              <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4 mt-4">
                 {error && (
                   <Alert variant="destructive">
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
 
+                {/* Email Section */}
+                <div className="space-y-2">
+                  <Label htmlFor="register-email">Email</Label>
+                  <Input
+                    id="register-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    {...registerForm.register("email")}
+                    disabled={isLoading}
+                  />
+                  {registerForm.formState.errors.email && (
+                    <p className="text-sm text-red-500">{registerForm.formState.errors.email.message}</p>
+                  )}
+                </div>
+
+                {/* Password Section */}
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="register-password">Password</Label>
+                    <Input
+                      id="register-password"
+                      type="password"
+                      placeholder="Choose a password"
+                      {...registerForm.register("password")}
+                      disabled={isLoading}
+                    />
+                    {registerForm.formState.errors.password && (
+                      <p className="text-sm text-red-500">{registerForm.formState.errors.password.message}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="register-password2">Confirm Password</Label>
+                    <Input
+                      id="register-password2"
+                      type="password"
+                      placeholder="Confirm your password"
+                      {...registerForm.register("password2")}
+                      disabled={isLoading}
+                    />
+                    {registerForm.formState.errors.password2 && (
+                      <p className="text-sm text-red-500">{registerForm.formState.errors.password2.message}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Username Section */}
                 <div className="space-y-2">
                   <Label htmlFor="register-username">Username</Label>
                   <Input
                     id="register-username"
                     placeholder="Choose a username"
-                    {...registerField("username")}
+                    {...registerForm.register("username")}
                     disabled={isLoading}
                   />
-                  {errors.username && (
-                    <p className="text-sm text-red-500">{errors.username.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="register-password">Password</Label>
-                  <Input
-                    id="register-password"
-                    type="password"
-                    placeholder="Choose a password"
-                    {...registerField("password")}
-                    disabled={isLoading}
-                  />
-                  {errors.password && (
-                    <p className="text-sm text-red-500">{errors.password.message}</p>
+                  {registerForm.formState.errors.username && (
+                    <p className="text-sm text-red-500">{registerForm.formState.errors.username.message}</p>
                   )}
                 </div>
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
+                  {isRegisterLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Creating account...
