@@ -16,8 +16,8 @@ export function TokenRefresh() {
       return
     }
 
-    // Refresh token every 4 minutes (1 minute before 5-minute expiry)
-    const REFRESH_INTERVAL = 4 * 60 * 1000 // 4 minutes in milliseconds
+    // Refresh token every 25 minutes (5 minute before 30-minute expiry)
+    const REFRESH_INTERVAL = 25 * 60 * 1000 // 25 minutes in milliseconds
 
     const refreshAccessToken = async () => {
       try {

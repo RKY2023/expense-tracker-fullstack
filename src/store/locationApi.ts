@@ -36,13 +36,56 @@ interface ApiResponse<T> {
 }
 
 interface BankStatementUploadRequest {
+  file: File
+}
+
+interface BankStatementData {
+  id: number
   file: string
   original_filename: string
+  is_encrypted: boolean
+  status: string
+  error_message: string | null
+  processed_at: string | null
+  created_at: string
+  updated_at: string
+  transaction_count: number
 }
 
 interface BankStatementUploadResponse {
   message: string
-  data: any
+  data: BankStatementData
+}
+
+interface ProcessBankStatementResponse {
+  message: string
+  data: BankStatementData
+}
+
+interface BankTransaction {
+  id: number
+  transaction_date: string
+  description: string
+  amount: string
+  transaction_type: string
+  balance: string | null
+  bank_statement: number
+  created_at: string
+  updated_at: string
+}
+
+interface BankTransactionsResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: BankTransaction[]
+}
+
+interface BankStatementsListResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: BankStatementData[]
 }
 
 interface CategoryResponse {
@@ -83,14 +126,17 @@ interface ExpensesApiResponse {
 
 const baseQuery = fetchBaseQuery({
   baseUrl: env.apiHost,
-  prepareHeaders: (headers, { getState }) => {
+  prepareHeaders: (headers, { getState, endpoint }) => {
     // Get token from Redux state
     const token = (getState() as any).auth.accessToken
     if (token) {
       headers.set('Authorization', `Bearer ${token}`)
     }
 
-    headers.set('Content-Type', 'application/json')
+    // Don't set Content-Type for file uploads - let browser set it with boundary
+    if (endpoint !== 'uploadBankStatement') {
+      headers.set('Content-Type', 'application/json')
+    }
     return headers
   },
   credentials: 'include',
@@ -133,11 +179,30 @@ export const locationApi = createApi({
       query: (stateId) => stateId ? `/region/?state_id=${stateId}` : '/region/',
     }),
     uploadBankStatement: builder.mutation<BankStatementUploadResponse, BankStatementUploadRequest>({
-      query: (body) => ({
-        url: '/expenses/bank-statements/upload',
+      query: (body) => {
+        const formData = new FormData()
+        formData.append('file', body.file)
+        return {
+          url: '/expenses/bank-statements/upload/',
+          method: 'POST',
+          body: formData,
+        }
+      },
+    }),
+    getBankStatements: builder.query<BankStatementsListResponse, void>({
+      query: () => '/expenses/bank-statements/',
+    }),
+    processBankStatement: builder.mutation<ProcessBankStatementResponse, number>({
+      query: (id) => ({
+        url: `/expenses/bank-statements/${id}/process/`,
         method: 'POST',
-        body,
       }),
+    }),
+    getBankTransactions: builder.query<BankTransactionsResponse, number | void>({
+      query: (bankStatementId) =>
+        bankStatementId
+          ? `/expenses/bank-transactions/?bank_statement=${bankStatementId}`
+          : '/expenses/bank-transactions/',
     }),
     exportExpensesExcel: builder.mutation<Blob, void>({
       query: () => ({
@@ -167,6 +232,9 @@ export const {
   useGetStatesQuery,
   useGetRegionsQuery,
   useUploadBankStatementMutation,
+  useGetBankStatementsQuery,
+  useProcessBankStatementMutation,
+  useGetBankTransactionsQuery,
   useExportExpensesExcelMutation,
   useExportExpensesCsvMutation,
   useGetCategoriesQuery,
